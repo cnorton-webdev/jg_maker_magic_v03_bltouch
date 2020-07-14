@@ -510,7 +510,7 @@
 #define USE_XMIN_PLUG // DaHai - This is odd because on my board X-Enstop is plugged into X+
 #define USE_YMIN_PLUG
 #define USE_ZMIN_PLUG
-// define USE_XMAX_PLUG // We have to tell Marlin to use XMAX instead of XMIN, default was commented - Cnorton
+// define USE_XMAX_PLUG
 //#define USE_YMAX_PLUG
 //#define USE_ZMAX_PLUG
 
@@ -529,8 +529,8 @@
 
 // Mechanical endstop with COM to ground and NC to Signal uses "false" here (most common setup).
 #define X_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
-#define Y_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.//������false // DaHai - was: false
-#define Z_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.//������false // DaDai - was: false
+#define Y_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.// DaHai - was: false
+#define Z_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.// DaDai - was: false
 #define X_MAX_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
 #define Y_MAX_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
 #define Z_MAX_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
