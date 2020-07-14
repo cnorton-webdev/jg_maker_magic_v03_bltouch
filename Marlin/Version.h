@@ -35,7 +35,7 @@
   /**
    * Marlin release version identifier
    */
-  #define SHORT_BUILD_VERSION "v0.2" // DaHai
+  #define SHORT_BUILD_VERSION "v0.3" // CNorton
 
   /**
    * Verbose version identifier which should contain a reference to the location
@@ -48,7 +48,7 @@
    * here we define this default string as the date where the latest release
    * version was tagged.
    */
-  #define STRING_DISTRIBUTION_DATE "2019-05-14" // DaHai
+  #define STRING_DISTRIBUTION_DATE "2020-07-13" // CNorton
 
   /**
    * Required minimum Configuration.h and Configuration_adv.h file versions.
@@ -89,6 +89,6 @@
    * The WEBSITE_URL is the location where users can get more information such as
    * documentation about a specific Marlin release.
    */
-  #define WEBSITE_URL "https://www.facebook.com/groups/681392232275407/" // DaHai
+  #define WEBSITE_URL "https://github.com/cnorton-webdev/jg_maker_magic_v03_bltouch" // CNorton
 
 #endif // USE_AUTOMATIC_VERSIONING
