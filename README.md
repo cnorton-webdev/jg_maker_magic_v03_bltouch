@@ -3,10 +3,26 @@
 ***
 
 Modified Marlin firmware and adds the ability to use the BLTouch or clones on the JGMaker Magic 3D Printer.
+### Change log
+
+****
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.3.1] - 2020-07-15
+### Added
+- Marlin firmware version 2.0.5
+
+### Removed
+- Marlin firmware version 1.1.9
 
 # Installation
 
 ***
+
 ### Board modifications
 
 If you have not already followed the guide to modify your board to add the ability to use the BLTouch or clones please do so [here](https://cnorton-webdev.github.io). You will need to do these modifications as without them there is no place to plug the probe into for the servo control signal. **Please note this will most likely void your warrenty with JGMaker**, so only do this modification if you are OK with doing so. Modification is relatively straight forward if you already know how to solder, if you do not know how to solder I would recommend finding a friend or someone who can help you with the soldering portion of the modification.
@@ -122,5 +138,5 @@ available at [http://contributor-covenant.org/version/1/4][version]
 
 ***
 
-This firmware builds on the custom firmware by DaHai Zhu 
+Originally based on the custom firmware by DaHai Zhu 
 - [DaHai Zhu's original firmware](https://www.dropbox.com/sh/v7w7u2kmo34kw3u/AAAkNOoAhwuS59cOvrLWS9fDa?dl=0)
