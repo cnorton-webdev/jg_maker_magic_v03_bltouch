@@ -25,7 +25,7 @@
  * Release version. Leave the Marlin version or apply a custom scheme.
  */
 #ifndef SHORT_BUILD_VERSION
-  #define SHORT_BUILD_VERSION "2.0.5.4 (Magic v0.3.1)" // CNorton
+  #define SHORT_BUILD_VERSION "2.0.5.4 (Magic v0.3.2)" // CNorton
 #endif
 
 /**
