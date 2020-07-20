@@ -25,7 +25,7 @@
  * Release version. Leave the Marlin version or apply a custom scheme.
  */
 #ifndef SHORT_BUILD_VERSION
-  #define SHORT_BUILD_VERSION "2.0.5.4 (Magic v0.3.2)" // CNorton
+  #define SHORT_BUILD_VERSION "2.0.5.4 (Magic v0.3.3)" // CNorton
 #endif
 
 /**
@@ -42,7 +42,7 @@
  * version was tagged.
  */
 #ifndef STRING_DISTRIBUTION_DATE
-  #define STRING_DISTRIBUTION_DATE "2020-07-15" // CNorton
+  #define STRING_DISTRIBUTION_DATE "2020-07-19" // CNorton
 #endif
 
 /**
