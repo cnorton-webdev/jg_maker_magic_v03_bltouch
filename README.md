@@ -6,6 +6,15 @@ Modified Marlin firmware and adds the ability to use the BLTouch or clones on th
 ### Latest change
 
 ****
+## [0.3.4] - 2020-11-21
+### Changed
+- Enabled SD card support
+
+## [0.3.4] - 2020-07-19
+### Changed
+- Additional auto bed leveling features enabled
+- Auto run out sensor re-enabled
+- Thermal runaway timeouts changed to the default 120s to prevent triggering during warmup
 
 ## [0.3.2] - 2020-07-15
 ### Changed
