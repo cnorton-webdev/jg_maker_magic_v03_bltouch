@@ -19,7 +19,7 @@ Before diving in, we recommend the following essential links:
 
 Marlin Firmware Official Website
 
-  - http://marlinfw.org/
+  - http://devsoft.app/
     The official Marlin Firmware website contains the most up-to-date
     documentation. Contributions are always welcome!
 

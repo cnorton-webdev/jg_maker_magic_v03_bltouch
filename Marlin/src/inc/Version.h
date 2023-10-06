@@ -25,7 +25,7 @@
  * Release version. Leave the Marlin version or apply a custom scheme.
  */
 #ifndef SHORT_BUILD_VERSION
-  #define SHORT_BUILD_VERSION "2.0.5.4 (Magic v0.3.3)" // CNorton
+  #define SHORT_BUILD_VERSION "2.0.5.4_Magic_V0.3.3" //
 #endif
 
 /**
@@ -42,7 +42,7 @@
  * version was tagged.
  */
 #ifndef STRING_DISTRIBUTION_DATE
-  #define STRING_DISTRIBUTION_DATE "2020-07-19" // CNorton
+  #define STRING_DISTRIBUTION_DATE "2023-10-05"
 #endif
 
 /**
@@ -82,7 +82,7 @@
  * providing the source code to your customers.)
  */
 #ifndef SOURCE_CODE_URL
-  #define SOURCE_CODE_URL "https://github.com/MarlinFirmware/Marlin"
+  #define SOURCE_CODE_URL "https://github.com/by-johnchen/Marlin"
 #endif
 
 /**
@@ -97,7 +97,7 @@
    * documentation about a specific Marlin release. Displayed in the Info Menu.
    */
 #ifndef WEBSITE_URL
-  #define WEBSITE_URL "https://github.com/cnorton-webdev/jg_maker_magic_v03_bltouch" // CNorton
+  #define WEBSITE_URL "https://github.com/by-johnchen/jg_maker_magic_v03_bltouch"
 #endif
 
 /**
