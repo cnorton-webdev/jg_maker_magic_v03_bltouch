@@ -16,13 +16,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * Gen7 v1.4 pin assignments
+ * Schematic (1.4): https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Gen7%20v1.4/Gen7Board%201.4%20Schematic.pdf
+ * Origin (1.4): https://github.com/Traumflug/Generation_7_Electronics/blob/Gen7Board-1.4/release%20documents/Gen7Board%201.4%20Schematic.pdf
+ * Schematic (1.4.1): https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Gen7%20v1.4.1/Gen7Board%201.4.1%20Schematic.pdf
+ * Origin (1.4.1): https://github.com/Traumflug/Generation_7_Electronics/blob/Gen7Board-1.4.1/release%20documents/Gen7Board%201.4.1%20Schematic.pdf
  */
 
 /**
@@ -31,7 +35,6 @@
  * 1) added pointer to a current Arduino IDE extension
  * 2) added support for M3, M4 & M5 spindle control commands
  * 3) added case light pin definition
- *
  */
 
 /**
@@ -49,12 +52,10 @@
  * Just use the above JSON URL instead of Sparkfun's JSON.
  *
  * Once installed select the Sanguino board and then select the CPU.
- *
  */
 
-#if !defined(__AVR_ATmega644P__) && !defined(__AVR_ATmega644__) && !defined(__AVR_ATmega1284P__)
-  #error "Oops! Select 'Sanguino' in 'Tools > Boards' and 'ATmega644', 'ATmega644P', or 'ATmega1284P' in 'Tools > Processor.'"
-#endif
+#define ALLOW_MEGA644
+#include "env_validate.h"
 
 #define BOARD_INFO_NAME "Gen7 v1.4"
 
@@ -102,7 +103,10 @@
 // Misc. Functions
 //
 #define PS_ON_PIN                             15
-#define CASE_LIGHT_PIN                        15  // Hardware PWM
+
+#ifndef CASE_LIGHT_PIN
+  #define CASE_LIGHT_PIN                      15  // Hardware PWM
+#endif
 
 // A pin for debugging
 #define DEBUG_PIN                              0
@@ -114,6 +118,8 @@
 //
 // M3/M4/M5 - Spindle/Laser Control
 //
-#define SPINDLE_LASER_ENA_PIN                 20  // Pullup or pulldown!
-#define SPINDLE_LASER_PWM_PIN                 16  // Hardware PWM
-#define SPINDLE_DIR_PIN                       21
+#if HAS_CUTTER
+  #define SPINDLE_LASER_PWM_PIN               16  // Hardware PWM
+  #define SPINDLE_LASER_ENA_PIN               20  // Pullup or pulldown!
+  #define SPINDLE_DIR_PIN                     21
+#endif

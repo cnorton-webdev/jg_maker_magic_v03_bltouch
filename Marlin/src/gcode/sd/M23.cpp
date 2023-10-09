@@ -16,17 +16,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
 #include "../../inc/MarlinConfig.h"
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
 
 #include "../gcode.h"
 #include "../../sd/cardreader.h"
-#include "../../lcd/ultralcd.h"
+#include "../../lcd/marlinui.h"
 
 /**
  * M23: Open a file
@@ -38,9 +38,7 @@ void GcodeSuite::M23() {
   for (char *fn = parser.string_arg; *fn; ++fn) if (*fn == ' ') *fn = '\0';
   card.openFileRead(parser.string_arg);
 
-  #if ENABLED(LCD_SET_PROGRESS_MANUALLY)
-    ui.set_progress(0);
-  #endif
+  TERN_(SET_PROGRESS_PERCENT, ui.set_progress(0));
 }
 
-#endif // SDSUPPORT
+#endif // HAS_MEDIA

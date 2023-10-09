@@ -16,12 +16,19 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
-// If no real EEPROM, Flash emulation, or SRAM emulation is available fall back to SD emulation
-#if ENABLED(EEPROM_SETTINGS) && NONE(USE_WIRED_EEPROM, FLASH_EEPROM_EMULATION, SRAM_EEPROM_EMULATION)
+// If no real or emulated EEPROM selected, fall back to SD emulation
+#if USE_FALLBACK_EEPROM
   #define SDCARD_EEPROM_EMULATION
+#elif ANY(I2C_EEPROM, SPI_EEPROM)
+  #define USE_SHARED_EEPROM 1
+#endif
+
+// Some STM32F4 boards may lose steps when saving to EEPROM during print (PR #17946)
+#if defined(STM32F4xx) && ENABLED(FLASH_EEPROM_EMULATION) && PRINTCOUNTER_SAVE_INTERVAL > 0
+  #define PRINTCOUNTER_SYNC
 #endif

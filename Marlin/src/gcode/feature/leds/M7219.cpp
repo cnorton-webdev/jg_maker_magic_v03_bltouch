@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -79,10 +79,10 @@ void GcodeSuite::M7219() {
   }
 
   if (parser.seen('P')) {
-    LOOP_L_N(r, MAX7219_LINES) {
+    for (uint8_t r = 0; r < MAX7219_LINES; ++r) {
       SERIAL_ECHOPGM("led_line[");
       if (r < 10) SERIAL_CHAR(' ');
-      SERIAL_ECHO(int(r));
+      SERIAL_ECHO(r);
       SERIAL_ECHOPGM("]=");
       for (uint8_t b = 8; b--;) SERIAL_CHAR('0' + TEST(max7219.led_line[r], b));
       SERIAL_EOL();

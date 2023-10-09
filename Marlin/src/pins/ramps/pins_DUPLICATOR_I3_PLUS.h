@@ -16,18 +16,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * Wanhao Duplicator i3 Plus pin assignments
+ * ATmega2560
  */
 
-#ifndef __AVR_ATmega2560__
-  #error "Oops! Select 'Arduino/Genuino Mega or Mega 2560' in 'Tools > Board.'"
-#endif
+#define REQUIRE_MEGA2560
+#include "env_validate.h"
 
 #define BOARD_INFO_NAME "Duplicator i3 Plus"
 
@@ -72,7 +72,7 @@
 #define HEATER_0_PIN                           4  // PG5 / PWM4
 #define HEATER_BED_PIN                         3  // PE5 / PWM3
 
-#define FAN_PIN                                5  // PE3 / PWM5
+#define FAN0_PIN                               5  // PE3 / PWM5
 
 //
 // Misc. Functions
@@ -80,17 +80,17 @@
 #define SDSS                                  53  // PB0 / SS
 #define LED_PIN                               13  // PB7 / PWM13
 
-#define MISO_PIN                              50  // PB3
-#define MOSI_PIN                              51  // PB2
-#define SCK_PIN                               52  // PB1
+#define SD_MISO_PIN                           50  // PB3
+#define SD_MOSI_PIN                           51  // PB2
+#define SD_SCK_PIN                            52  // PB1
 
 //
 // LCDs and Controllers
 //
-#if HAS_SPI_LCD
+#if HAS_WIRED_LCD
   #if ENABLED(ZONESTAR_LCD)
     #define LCD_PINS_RS                        2
-    #define LCD_PINS_ENABLE                   36
+    #define LCD_PINS_EN                       36
     #define LCD_PINS_D4                       37
     #define LCD_PINS_D5                       34
     #define LCD_PINS_D6                       35
@@ -113,7 +113,7 @@
  * # Pin | ATMEGA2560 Pin | Arduino #
  * ##################################
  * #  1  | 52 / PG1 (!RD) |    40   #
- * #  2  | 95 / PF2 (A2)  |     2   #
+ * #  2  | 95 / PF2 (A2)  |    56   #
  * #  3  | 54 / PC1 (A9)  |    36   #
  * #  4  | 53 / PC0 (A8)  |    37   #
  * #  5  | 56 / PC3 (A11) |    34   #

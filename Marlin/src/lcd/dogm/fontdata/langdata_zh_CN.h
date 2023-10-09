@@ -3,7 +3,9 @@
  * Contents will be REPLACED by future processing!
  * Use genallfont.sh to generate font data for updated languages.
  */
-#include <U8glib.h>
+#pragma once
+
+#include "langdata.h"
 
 const u8g_fntpgm_uint8_t fontpage_69_191_191[28] U8G_FONT_SECTION("fontpage_69_191_191") = {
   0x00,0x0C,0x0F,0x00,0xFE,0x00,0x00,0x00,0x00,0x00,0xBF,0xBF,0x00,0x05,0x00,0x00,
@@ -1447,8 +1449,7 @@ const u8g_fntpgm_uint8_t fontpage_510_154_154[30] U8G_FONT_SECTION("fontpage_510
   0x00,0x0C,0x0F,0x00,0xFE,0x00,0x00,0x00,0x00,0x00,0x9A,0x9A,0x00,0x08,0x00,0x00,
   0x00,0x02,0x07,0x07,0x0C,0x06,0x01,0xC0,0xC0,0x00,0x00,0x00,0xC0,0xC0};
 
-#define FONTDATA_ITEM(page, begin, end, data) { page, begin, end, COUNT(data), data }
-static const uxg_fontinfo_t g_fontinfo[] PROGMEM = {
+static const uxg_fontinfo_t g_fontinfo_zh_CN[] PROGMEM = {
   FONTDATA_ITEM(69, 191, 191, fontpage_69_191_191), // '⊿' -- '⊿'
   FONTDATA_ITEM(156, 128, 128, fontpage_156_128_128), // '一' -- '一'
   FONTDATA_ITEM(156, 137, 139, fontpage_156_137_139), // '三' -- '下'

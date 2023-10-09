@@ -16,13 +16,21 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * Gen7 v1.1, v1.2, v1.3 pin assignments
+ * Schematic (1.1): https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Gen7%20v1.1/Gen7Board%20Schematic.pdf
+ * Origin (1.1): https://github.com/Traumflug/Generation_7_Electronics/blob/release-1.1/release%20documents/Gen7Board%20Schematic.pdf
+ * Schematic (1.2): https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Gen7%20v1.2/Gen7Board%20Schematic.pdf
+ * Origin (1.2): https://github.com/Traumflug/Generation_7_Electronics/blob/release-1.2/release%20documents/Gen7Board%20Schematic.pdf
+ * Schematic (1.3): https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Gen7%20v1.3/Gen7Board%20Schematic.pdf
+ * Origin (1.3): https://github.com/Traumflug/Generation_7_Electronics/blob/release-1.3/release%20documents/Gen7Board%20Schematic.pdf
+ * Schematic (1.3.1): https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Gen7%20v1.3.1/Gen7Board%20Schematic.pdf
+ * Origin (1.3.1): https://github.com/Traumflug/Generation_7_Electronics/blob/release-1.3.1/release%20documents/Gen7Board%20Schematic.pdf
  */
 
  /**
@@ -31,7 +39,6 @@
  * 1) added pointer to a current Arduino IDE extension
  * 2) added support for M3, M4 & M5 spindle control commands
  * 3) added case light pin definition
- *
  */
 
 /**
@@ -49,15 +56,13 @@
  * Just use the above JSON URL instead of Sparkfun's JSON.
  *
  * Once installed select the Sanguino board and then select the CPU.
- *
  */
 
-#if !defined(__AVR_ATmega644P__) && !defined(__AVR_ATmega644__) && !defined(__AVR_ATmega1284P__)
-  #error "Oops! Select 'Sanguino' in 'Tools > Boards' and 'ATmega644', 'ATmega644P', or 'ATmega1284P' in 'Tools > Processor.'"
-#endif
+#define ALLOW_MEGA644
+#include "env_validate.h"
 
 #ifndef BOARD_INFO_NAME
-  #define BOARD_INFO_NAME "Gen7 v1.1 / 1.2"
+  #define BOARD_INFO_NAME "Gen7 v1.1 - v1.3"
 #endif
 
 #ifndef GEN7_VERSION
@@ -112,8 +117,8 @@
 #define HEATER_0_PIN                           4
 #define HEATER_BED_PIN                         3
 
-#if !defined(FAN_PIN) && GEN7_VERSION < 13        // Gen7 v1.3 removed the fan pin
-  #define FAN_PIN                             31
+#if !defined(FAN0_PIN) && GEN7_VERSION < 13       // Gen7 v1.3 removed the fan pin
+  #define FAN0_PIN                            31
 #endif
 
 //

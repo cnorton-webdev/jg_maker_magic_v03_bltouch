@@ -16,17 +16,20 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * MKS GEN L V2 – Arduino Mega2560 with RAMPS v1.4 pin assignments
+ * Schematic: https://green-candy.osdn.jp/external/MarlinFW/board_schematics/RAMPS/MKS%20GEN%20L%20V2.0/MKS%20Gen_L%20V2.0_001%20SCH.pdf
+ * Origin: https://github.com/makerbase-mks/MKS-GEN_L/blob/master/hardware/MKS%20Gen_L%20V2.0_001/MKS%20Gen_L%20V2.0_001%20SCH.pdf
+ * ATmega2560
  */
 
 #if HOTENDS > 2 || E_STEPPERS > 2
-  #error "MKS GEN L V2 supports up to 2 hotends / E-steppers. Comment out this line to continue."
+  #error "MKS GEN L V2 supports up to 2 hotends / E steppers."
 #endif
 
 #define BOARD_INFO_NAME "MKS GEN L V2"
@@ -34,8 +37,8 @@
 //
 // Heaters / Fans
 //
-// Power outputs EFBF or EFBE
-#define MOSFET_D_PIN                           7
+#define MOSFET_B_PIN                           7
+#define FAN0_PIN                               9
 
 //
 // CS Pins wired to avoid conflict with the LCD

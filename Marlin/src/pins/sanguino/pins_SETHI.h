@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -47,12 +47,10 @@
  * Just use the above JSON URL instead of Sparkfun's JSON.
  *
  * Once installed select the Sanguino board and then select the CPU.
- *
  */
 
-#if !defined(__AVR_ATmega644P__) && !defined(__AVR_ATmega644__) && !defined(__AVR_ATmega1284P__)
-  #error "Oops! Select 'Sanguino' in 'Tools > Boards' and 'ATmega644', 'ATmega644P', or 'ATmega1284P' in 'Tools > Processor.'"
-#endif
+#define ALLOW_MEGA644
+#include "env_validate.h"
 
 #define BOARD_INFO_NAME "Sethi 3D_1"
 
@@ -99,13 +97,8 @@
 #define HEATER_0_PIN                           4
 #define HEATER_BED_PIN                         3
 
-#ifndef FAN_PIN
-  #if GEN7_VERSION >= 13
-    // Gen7 v1.3 removed the fan pin
-    #define FAN_PIN                           -1
-  #else
-    #define FAN_PIN                           31
-  #endif
+#if !defined(FAN0_PIN) && GEN7_VERSION < 13       // Gen7 v1.3 removed the fan pin
+  #define FAN0_PIN                            31
 #endif
 
 //

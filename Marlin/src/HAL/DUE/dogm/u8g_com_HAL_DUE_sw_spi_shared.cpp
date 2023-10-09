@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -57,11 +57,12 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if HAS_GRAPHICAL_LCD
+#if HAS_MARLINUI_U8GLIB
 
+#include "../../../inc/MarlinConfig.h"
 #include "../../shared/Delay.h"
 
-#include <U8glib.h>
+#include <U8glib-HAL.h>
 
 #include "u8g_com_HAL_DUE_sw_spi_shared.h"
 
@@ -80,7 +81,7 @@ Pio *SCK_pPio, *MOSI_pPio;
 uint32_t SCK_dwMask, MOSI_dwMask;
 
 void u8g_spiSend_sw_DUE_mode_0(uint8_t val) { // 3MHz
-  LOOP_L_N(i, 8) {
+  for (uint8_t i = 0; i < 8; ++i) {
     if (val & 0x80)
       MOSI_pPio->PIO_SODR = MOSI_dwMask;
     else
@@ -94,7 +95,7 @@ void u8g_spiSend_sw_DUE_mode_0(uint8_t val) { // 3MHz
 }
 
 void u8g_spiSend_sw_DUE_mode_3(uint8_t val) { // 3.5MHz
-  LOOP_L_N(i, 8) {
+  for (uint8_t i = 0; i < 8; ++i) {
     SCK_pPio->PIO_CODR = SCK_dwMask;
     DELAY_NS(50);
     if (val & 0x80)
@@ -108,5 +109,5 @@ void u8g_spiSend_sw_DUE_mode_3(uint8_t val) { // 3.5MHz
   }
 }
 
-#endif // HAS_GRAPHICAL_LCD
+#endif // HAS_MARLINUI_U8GLIB
 #endif // ARDUINO_ARCH_SAM

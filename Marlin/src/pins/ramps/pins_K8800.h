@@ -16,31 +16,35 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * Velleman K8800 (Vertex)
+ * Schematic: https://green-candy.osdn.jp/external/MarlinFW/board_schematics/RAMPS/Velleman%20K8800/K8800-schematic-V1.4.pdf
+ * Origin: https://www.velleman.eu/downloads/files/vertex-delta/schematics/K8800-schematic-V1.4.pdf
+ * ATmega2560, ATmega1280
  */
 
-#if !defined(__AVR_ATmega1280__) && !defined(__AVR_ATmega2560__)
-  #error "Oops! Select 'Arduino/Genuino Mega or Mega 2560' in 'Tools > Board.'"
-#endif
+#include "env_validate.h"
 
 #define BOARD_INFO_NAME      "K8800"
 #define DEFAULT_MACHINE_NAME "Vertex Delta"
-
-//#define LCD_SCREEN_ROT_180
 
 //
 // Limit Switches
 //
 #define X_STOP_PIN                             3
 #define Y_STOP_PIN                            14
-#define Z_MIN_PIN                             68  // Used for bed leveling
-#define Z_MAX_PIN                             66
+#define Z_STOP_PIN                            66
+
+#ifndef Z_MIN_PROBE_PIN
+  #define Z_MIN_PROBE_PIN                     68
+#endif
+
+#define FIL_RUNOUT_PIN                        69  // PK7
 
 //
 // Steppers
@@ -61,10 +65,6 @@
 #define E0_DIR_PIN                            28
 #define E0_ENABLE_PIN                         24
 
-#define E1_STEP_PIN                           32
-#define E1_DIR_PIN                            34
-#define E1_ENABLE_PIN                         30
-
 //
 // Temperature Sensors
 //
@@ -74,36 +74,46 @@
 // Heaters / Fans
 //
 #define HEATER_0_PIN                          10
-#define FAN_PIN                                8
+#define FAN0_PIN                               8
 #define CONTROLLER_FAN_PIN                     9
 
 //
 // Misc. Functions
 //
-#define SDSS                                  25
-
-#define FIL_RUNOUT_PIN                        69  // PK7
 #define KILL_PIN                              20  // PD1
+#define CASE_LIGHT_PIN                         7
+
+//
+// SD Card
+//
+#define SDSS                                  25
+#define SD_DETECT_PIN                         21  // PD0
 
 //
 // LCD / Controller
 //
-#define SD_DETECT_PIN                         21  // PD0
-#define LCD_SDSS                              53
 #define BEEPER_PIN                             6
 
-#define DOGLCD_CS                             29
-#define DOGLCD_A0                             27
+#if HAS_WIRED_LCD
 
-#define LCD_PINS_RS                           27
-#define LCD_PINS_ENABLE                       29
-#define LCD_PINS_D4                           37
-#define LCD_PINS_D5                           35
-#define LCD_PINS_D6                           33
-#define LCD_PINS_D7                           31
+  #define LCD_SDSS                            53
 
-#if ENABLED(NEWPANEL)
-  #define BTN_EN1                             17
-  #define BTN_EN2                             16
-  #define BTN_ENC                             23
-#endif
+  #define DOGLCD_CS                           29
+  #define DOGLCD_A0                           27
+
+  #define LCD_PINS_RS                         27
+  #define LCD_PINS_EN                         29
+  #define LCD_PINS_D4                         37
+  #define LCD_PINS_D5                         35
+  #define LCD_PINS_D6                         33
+  #define LCD_PINS_D7                         31
+
+  //#define LCD_SCREEN_ROTATE                180  // 0, 90, 180, 270
+
+  #if IS_NEWPANEL
+    #define BTN_EN1                           17
+    #define BTN_EN2                           16
+    #define BTN_ENC                           23
+  #endif
+
+#endif // HAS_WIRED_LCD

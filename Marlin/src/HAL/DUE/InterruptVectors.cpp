@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -41,7 +41,7 @@
    practice, we need alignment to 256 bytes to make this work in all
    cases */
 __attribute__ ((aligned(256)))
-static DeviceVectors ram_tab = { nullptr };
+static DeviceVectors ram_tab[61] = { nullptr };
 
 /**
  * This function checks if the exception/interrupt table is already in SRAM or not.

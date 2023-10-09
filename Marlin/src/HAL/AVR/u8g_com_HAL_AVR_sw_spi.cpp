@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -57,15 +57,15 @@
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if HAS_GRAPHICAL_LCD
+#if HAS_MARLINUI_U8GLIB
 
 #include "../shared/Marduino.h"
 #include "../shared/Delay.h"
 
-#include <U8glib.h>
+#include <U8glib-HAL.h>
 
-uint8_t u8g_bitData, u8g_bitNotData, u8g_bitClock, u8g_bitNotClock;
-volatile uint8_t *u8g_outData, *u8g_outClock;
+static uint8_t u8g_bitData, u8g_bitNotData, u8g_bitClock, u8g_bitNotClock;
+static volatile uint8_t *u8g_outData, *u8g_outClock;
 
 static void u8g_com_arduino_init_shift_out(uint8_t dataPin, uint8_t clockPin) {
   u8g_outData = portOutputRegister(digitalPinToPort(dataPin));
@@ -88,7 +88,7 @@ void u8g_spiSend_sw_AVR_mode_0(uint8_t val) {
   volatile uint8_t *outData = u8g_outData,
                    *outClock = u8g_outClock;
   U8G_ATOMIC_START();
-  LOOP_L_N(i, 8) {
+  for (uint8_t i = 0; i < 8; ++i) {
     if (val & 0x80)
       *outData |= bitData;
     else
@@ -108,7 +108,7 @@ void u8g_spiSend_sw_AVR_mode_3(uint8_t val) {
   volatile uint8_t *outData = u8g_outData,
                    *outClock = u8g_outClock;
   U8G_ATOMIC_START();
-  LOOP_L_N(i, 8) {
+  for (uint8_t i = 0; i < 8; ++i) {
     *outClock &= bitNotClock;
     if (val & 0x80)
       *outData |= bitData;
@@ -189,5 +189,5 @@ uint8_t u8g_com_HAL_AVR_sw_sp_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void 
   return 1;
 }
 
-#endif // HAS_GRAPHICAL_LCD
+#endif // HAS_MARLINUI_U8GLIB
 #endif // ARDUINO_ARCH_SAM
