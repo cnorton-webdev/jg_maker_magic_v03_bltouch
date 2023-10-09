@@ -16,39 +16,24 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
 #include "../../inc/MarlinConfig.h"
 
-#if HAS_MEDIA
+#if ENABLED(SDSUPPORT)
 
 #include "../gcode.h"
 #include "../../sd/cardreader.h"
 
 /**
- * M20: List SD card to serial output in [name] [size] format.
- *
- * With CUSTOM_FIRMWARE_UPLOAD:
- *   F<bool> - List BIN files only, for use with firmware upload
- *
- * With LONG_FILENAME_HOST_SUPPORT:
- *   L<bool> - List long filenames (instead of DOS8.3 names)
- *
- * With M20_TIMESTAMP_SUPPORT:
- *   T<bool> - Include timestamps
+ * M20: List SD card to serial output
  */
 void GcodeSuite::M20() {
-  if (card.flag.mounted) {
-    SERIAL_ECHOLNPGM(STR_BEGIN_FILE_LIST);
-    card.ls(TERN0(CUSTOM_FIRMWARE_UPLOAD,     parser.boolval('F') << LS_ONLY_BIN)
-          | TERN0(LONG_FILENAME_HOST_SUPPORT, parser.boolval('L') << LS_LONG_FILENAME)
-          | TERN0(M20_TIMESTAMP_SUPPORT,      parser.boolval('T') << LS_TIMESTAMP));
-    SERIAL_ECHOLNPGM(STR_END_FILE_LIST);
-  }
-  else
-    SERIAL_ECHO_MSG(STR_NO_MEDIA);
+  SERIAL_ECHOLNPGM(STR_BEGIN_FILE_LIST);
+  card.ls();
+  SERIAL_ECHOLNPGM(STR_END_FILE_LIST);
 }
 
-#endif // HAS_MEDIA
+#endif // SDSUPPORT

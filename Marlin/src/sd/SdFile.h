@@ -16,14 +16,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
- * sd/SdFile.h
- *
+ * \file
+ * \brief SdFile class
+ */
+
+/**
  * Arduino SdFat Library
  * Copyright (c) 2009 by William Greiman
  *
@@ -33,20 +36,24 @@
 #include "SdBaseFile.h"
 
 #include <stdint.h>
+#include <string.h>
 
 /**
  * \class SdFile
  * \brief SdBaseFile with Print.
  */
-class SdFile : public SdBaseFile {
+class SdFile : public SdBaseFile/*, public Print*/ {
  public:
   SdFile() {}
-  SdFile(const char * const name, const uint8_t oflag);
-  size_t write(const uint8_t b);
-  int16_t write(const void * const buf, const uint16_t nbyte);
-  void write(const char * const str);
-  void write_P(PGM_P str);
-  void writeln_P(PGM_P const str);
-};
+  SdFile(const char* name, uint8_t oflag);
+  #if ARDUINO >= 100
+    size_t write(uint8_t b);
+  #else
+   void write(uint8_t b);
+  #endif
 
-using MediaFile = SdFile;
+  int16_t write(const void* buf, uint16_t nbyte);
+  void write(const char* str);
+  void write_P(PGM_P str);
+  void writeln_P(PGM_P str);
+};

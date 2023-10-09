@@ -16,19 +16,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * Azteeg X5 MINI pin assignments
- * Schematic (V1): https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Azteeg%20X5%20MINI/x5mini_design_files/X5mini_design_files/V1/X5%20Mini%20PUB%20v1.0.pdf
- * Schematic (V2): https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Azteeg%20X5%20MINI/x5mini_design_files/X5mini_design_files/V2/X5%20Mini%20V2%20SCH%20Pub.pdf
- * Schematic (V3): https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Azteeg%20X5%20MINI/x5mini_design_files/X5mini_design_files/V3/X5%20Mini%20V3%20SCH%20Pub.pdf
- * Origin: http://files.panucatt.com/datasheets/x5mini_design_files.zip
  */
-#include "env_validate.h"
+
+#ifndef MCU_LPC1769
+  #error "Oops! Make sure you have the LPC1769 environment selected in your IDE."
+#endif
 
 #ifndef BOARD_INFO_NAME
   #define BOARD_INFO_NAME "Azteeg X5 MINI"
@@ -39,9 +38,6 @@
 // LED
 //
 #define LED_PIN                            P1_18
-#define LED2_PIN                           P1_20
-#define LED3_PIN                           P1_19
-#define LED4_PIN                           P1_21
 
 //
 // Servos
@@ -83,13 +79,14 @@
 #define E0_ENABLE_PIN                      P0_04
 
 //
-// DIGIPOT slave addresses (7-bit unshifted)
+// DIGIPOT slave addresses
 //
 #ifndef DIGIPOT_I2C_ADDRESS_A
-  #define DIGIPOT_I2C_ADDRESS_A             0x2C
+  #define DIGIPOT_I2C_ADDRESS_A 0x2C              // unshifted slave address for first DIGIPOT
 #endif
+
 #ifndef DIGIPOT_I2C_ADDRESS_B
-  #define DIGIPOT_I2C_ADDRESS_B             0x2E
+  #define DIGIPOT_I2C_ADDRESS_B 0x2E              // unshifted slave address for second DIGIPOT
 #endif
 
 //
@@ -104,15 +101,15 @@
 //
 #define HEATER_BED_PIN                     P2_07
 #define HEATER_0_PIN                       P2_05
-#ifndef FAN0_PIN
-  #define FAN0_PIN                         P0_26
+#ifndef FAN_PIN
+  #define FAN_PIN                          P0_26
 #endif
 #define FAN1_PIN                           P1_25
 
 //
 // Display
 //
-#if HAS_WIRED_LCD
+#if HAS_SPI_LCD
 
   #if ENABLED(CR10_STOCKDISPLAY)
 
@@ -128,7 +125,7 @@
     #define BTN_ENC                        P3_25  // J3-4 & AUX-4
 
     #define LCD_PINS_RS                    P0_15  // J3-9 & AUX-4 (CS)
-    #define LCD_PINS_EN                    P0_18  // J3-10 & AUX-3 (SID, MOSI)
+    #define LCD_PINS_ENABLE                P0_18  // J3-10 & AUX-3 (SID, MOSI)
     #define LCD_PINS_D4                    P2_06  // J3-8 & AUX-3 (SCK, CLK)
 
   #else
@@ -142,54 +139,61 @@
     #define LCD_PINS_RS                    P0_16  // (16) J3-7 & AUX-4
     #define LCD_SDSS                       P0_16  // (16) J3-7 & AUX-4
     #define LCD_BACKLIGHT_PIN              P0_16  // (16) J3-7 & AUX-4 - only used on DOGLCD controllers
-    #define LCD_PINS_EN                    P0_18  // (51) (MOSI) J3-10 & AUX-3
+    #define LCD_PINS_ENABLE                P0_18  // (51) (MOSI) J3-10 & AUX-3
     #define LCD_PINS_D4                    P0_15  // (52) (SCK)  J3-9 & AUX-3
 
     #define DOGLCD_A0                      P2_06  // (59) J3-8 & AUX-2
 
-    #if IS_RRW_KEYPAD
-      #define SHIFT_OUT_PIN                P0_18  // (51)  (MOSI) J3-10 & AUX-3
-      #define SHIFT_CLK_PIN                P0_15  // (52)  (SCK)  J3-9 & AUX-3
-      #define SHIFT_LD_PIN                 P1_31  // (49)  not 5V tolerant   J3-1 & AUX-3
-    #elif !IS_NEWPANEL
-      //#define SHIFT_OUT_PIN              P2_11  // (35)  J3-3 & AUX-4
-      //#define SHIFT_CLK_PIN              P3_26  // (31)  J3-2 & AUX-4
-      //#define SHIFT_LD_PIN               P3_25  // (33)  J3-4 & AUX-4
-      //#define SHIFT_EN_PIN               P1_22  // (41)  J5-4 & AUX-4
+    #if ENABLED(REPRAPWORLD_KEYPAD)
+      #define SHIFT_OUT                    P0_18  // (51)  (MOSI) J3-10 & AUX-3
+      #define SHIFT_CLK                    P0_15  // (52)  (SCK)  J3-9 & AUX-3
+      #define SHIFT_LD                     P1_31  // (49)  not 5V tolerant   J3-1 & AUX-3
+    #elif DISABLED(NEWPANEL)
+      //#define SHIFT_OUT                  P2_11  // (35)  J3-3 & AUX-4
+      //#define SHIFT_CLK                  P3_26  // (31)  J3-2 & AUX-4
+      //#define SHIFT_LD                   P3_25  // (33)  J3-4 & AUX-4
+      //#define SHIFT_EN                   P1_22  // (41)  J5-4 & AUX-4
     #endif
 
     #if ANY(VIKI2, miniVIKI)
+      //#define LCD_SCREEN_ROT_180
+
       #define BEEPER_PIN                   P1_30  // (37) may change if cable changes
       #define DOGLCD_CS                    P0_26  // (63) J5-3 & AUX-2
-      #define DOGLCD_SCK              SD_SCK_PIN
-      #define DOGLCD_MOSI            SD_MOSI_PIN
+      #define DOGLCD_SCK                 SCK_PIN
+      #define DOGLCD_MOSI               MOSI_PIN
 
       #define STAT_LED_BLUE_PIN            P0_26  // (63)  may change if cable changes
       #define STAT_LED_RED_PIN             P1_21  // ( 6)  may change if cable changes
-
-      //#define LCD_SCREEN_ROTATE            180  // 0, 90, 180, 270
     #else
-      #if IS_ULTIPANEL
+      #if ENABLED(ULTIPANEL)
         #define LCD_PINS_D5                P1_17  // (71) ENET_MDIO
         #define LCD_PINS_D6                P1_14  // (73) ENET_RX_ER
         #define LCD_PINS_D7                P1_10  // (75) ENET_RXD1
       #endif
       #define BEEPER_PIN                   P1_30  // (37) not 5V tolerant
       #define DOGLCD_CS                    P0_16  // (16)
-
-      #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
-        #define BTN_ENC_EN           LCD_PINS_D7  // Detect the presence of the encoder
-      #endif
-
     #endif
 
     #if ENABLED(MINIPANEL)
-      //#define LCD_SCREEN_ROTATE            180  // 0, 90, 180, 270
+      // GLCD features
+      // Uncomment screen orientation
+      //#define LCD_SCREEN_ROT_90
+      //#define LCD_SCREEN_ROT_180
+      //#define LCD_SCREEN_ROT_270
     #endif
 
   #endif
 
-#endif // HAS_WIRED_LCD
+#endif // HAS_SPI_LCD
+
+//
+// EEPROM
+//
+#if NONE(FLASH_EEPROM_EMULATION, SDCARD_EEPROM_EMULATION)
+  #define FLASH_EEPROM_EMULATION
+  //#define SDCARD_EEPROM_EMULATION
+#endif
 
 //
 // SD Support
@@ -198,18 +202,19 @@
   #define SDCARD_CONNECTION              ONBOARD
 #endif
 
+#define ONBOARD_SD_CS_PIN                  P0_06  // Chip select for "System" SD card
+
 #if SD_CONNECTION_IS(LCD)
-  #define SD_SCK_PIN                       P0_15
-  #define SD_MISO_PIN                      P0_17
-  #define SD_MOSI_PIN                      P0_18
-  #define SD_SS_PIN                        P1_23
+  #define SCK_PIN                          P0_15
+  #define MISO_PIN                         P0_17
+  #define MOSI_PIN                         P0_18
+  #define SS_PIN                           P1_23
 #elif SD_CONNECTION_IS(ONBOARD)
   #undef SD_DETECT_PIN
-  #define SD_SCK_PIN                       P0_07
-  #define SD_MISO_PIN                      P0_08
-  #define SD_MOSI_PIN                      P0_09
-  #define ONBOARD_SD_CS_PIN                P0_06  // Chip select for "System" SD card
-  #define SD_SS_PIN            ONBOARD_SD_CS_PIN
+  #define SCK_PIN                          P0_07
+  #define MISO_PIN                         P0_08
+  #define MOSI_PIN                         P0_09
+  #define SS_PIN               ONBOARD_SD_CS_PIN
 #elif SD_CONNECTION_IS(CUSTOM_CABLE)
   #error "No custom SD drive cable defined for this board."
 #endif

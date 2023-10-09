@@ -16,26 +16,22 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
- * Geeetech GTM32 Pro VB board pin assignments
- * https://www.geeetech.com/wiki/index.php/File:Hardware_GTM32_PRO_VB.pdf
- *
- * Also applies to GTM32 Pro VD
+ * 24 May 2018 - @chepo for STM32F103VET6
+ * Schematic: https://github.com/chepo92/Smartto/blob/master/circuit_diagram/Rostock301/Hardware_GTM32_PRO_VB.pdf
  */
 
-#include "env_validate.h"
-
-#ifndef BOARD_INFO_NAME
-  #define BOARD_INFO_NAME    "GTM32 Pro VB"
+#ifndef __STM32F1__
+  #error "Oops! Select an STM32F1 board in 'Tools > Board.'"
 #endif
-#define DEFAULT_MACHINE_NAME "STM32F103VET6"
 
-#define BOARD_NO_NATIVE_USB
+#define BOARD_INFO_NAME      "GTM32 Pro VB"
+#define DEFAULT_MACHINE_NAME "STM32F103VET6"
 
 //#define DISABLE_DEBUG
 
@@ -53,13 +49,11 @@
 //#define DISABLE_JTAGSWD
 
 // Ignore temp readings during development.
-//#define BOGUS_TEMPERATURE_GRACE_PERIOD    2000
+//#define BOGUS_TEMPERATURE_GRACE_PERIOD 2000
 
 // Enable EEPROM Emulation for this board as it doesn't have EEPROM
-#if ANY(NO_EEPROM_SELECTED, FLASH_EEPROM_EMULATION)
-  #define FLASH_EEPROM_EMULATION
-  #define MARLIN_EEPROM_SIZE              0x1000  // 4K
-#endif
+#define FLASH_EEPROM_EMULATION
+#define E2END 0xFFF                               // 4KB
 
 //
 // Limit Switches
@@ -115,13 +109,10 @@
 //
 // These are FAN PWM pins on EXT0..EXT2 connectors.
 //
-//#define FAN0_PIN                          PB9   // EXT0 port
+//#define FAN_PIN                           PB9   // EXT0 port
+#define ORIG_E0_AUTO_FAN_PIN                PB9   // EXT0 port, used as main extruder fan
 #define FAN1_PIN                            PB8   // EXT1 port
 #define FAN2_PIN                            PB7   // EXT2 port
-
-#ifndef E0_AUTO_FAN_PIN
-  #define E0_AUTO_FAN_PIN                   PB9   // EXT0 port, used as main extruder fan
-#endif
 
 //
 // Temperature Sensors
@@ -139,16 +130,16 @@
 //
 // LCD / Controller
 //
-#if HAS_WIRED_LCD
+#if HAS_SPI_LCD
 
-  #if IS_RRD_SC
+  #if ENABLED(REPRAP_DISCOUNT_SMART_CONTROLLER)
     //
     // LCD display on J2 FFC40
     // Geeetech's LCD2004A Control Panel is very much like
     // RepRapDiscount Smart Controller, but adds an FFC40 connector
     //
     #define LCD_PINS_RS                     PE6   // CS chip select /SS chip slave select
-    #define LCD_PINS_EN                     PE14  // SID (MOSI)
+    #define LCD_PINS_ENABLE                 PE14  // SID (MOSI)
     #define LCD_PINS_D4                     PD8   // SCK (CLK) clock
     #define LCD_PINS_D5                     PD9
     #define LCD_PINS_D6                     PD10
@@ -162,16 +153,15 @@
     //#define LCD_UART_RX                   PD9
   #endif
 
-  // Alter timing for graphical display
-  #if IS_U8GLIB_ST7920
-    #define BOARD_ST7920_DELAY_1              96
-    #define BOARD_ST7920_DELAY_2              48
-    #define BOARD_ST7920_DELAY_3             715
+  #if HAS_GRAPHICAL_LCD
+    #define BOARD_ST7920_DELAY_1 DELAY_NS(96)
+    #define BOARD_ST7920_DELAY_2 DELAY_NS(48)
+    #define BOARD_ST7920_DELAY_3 DELAY_NS(715)
   #endif
 
-#endif // HAS_WIRED_LCD
+#endif // HAS_SPI_LCD
 
-#if IS_RRD_SC
+#if ENABLED(REPRAP_DISCOUNT_SMART_CONTROLLER)
   //
   // Geeetech's LCD2004A Control Panel is very much like
   // RepRapDiscount Smart Controller, but adds an FFC40 connector
@@ -213,29 +203,28 @@
   //
   // SD Card on RepRapDiscount Smart Controller (J2) or on SD_CARD connector
   //
-  #define SD_SS_PIN                         PC11
-  #define SD_SCK_PIN                        PC12
-  #define SD_MOSI_PIN                       PD2
-  #define SD_MISO_PIN                       PC8
+  #define SS_PIN                            PC11
+  #define SCK_PIN                           PC12
+  #define MOSI_PIN                          PD2
+  #define MISO_PIN                          PC8
   #define SD_DETECT_PIN                     PC7
 #else
   //
   // Use the on-board card socket labeled TF_CARD_SOCKET
   //
-  #define SD_SS_PIN                         PA4
-  #define SD_SCK_PIN                        PA5
-  #define SD_MOSI_PIN                       PA7
-  #define SD_MISO_PIN                       PA6
+  #define SS_PIN                            PA4
+  #define SCK_PIN                           PA5
+  #define MOSI_PIN                          PA7
+  #define MISO_PIN                          PA6
   #define SD_DETECT_PIN                     -1    // Card detect is not connected
 #endif
 
-#define SDSS                           SD_SS_PIN
+#define SDSS                              SS_PIN
 
-#if ENABLED(WIFISUPPORT)
-  //
-  // ESP WiFi can be soldered to J9 connector which is wired to USART2.
-  //
-  #define ESP_WIFI_MODULE_COM                  2
-  #define ESP_WIFI_MODULE_BAUDRATE        115200
-  #define ESP_WIFI_MODULE_RESET_PIN         -1
-#endif
+//
+// ESP WiFi can be soldered to J9 connector which is wired to USART2.
+// Must define WIFISUPPORT in Configuration.h for the printer.
+//
+#define ESP_WIFI_MODULE_COM 2
+#define ESP_WIFI_MODULE_BAUDRATE 115200
+#define ESP_WIFI_MODULE_RESET_PIN           -1

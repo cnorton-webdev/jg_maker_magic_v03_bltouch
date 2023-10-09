@@ -16,21 +16,21 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
-/**
- * BigTreeTech SKR 1.4 Turbo pin assignments
- * Schematic: https://green-candy.osdn.jp/external/MarlinFW/board_schematics/BTT%20SKR%20V1.4%20+%20Turbo/BTT%20SKR%20V1.4-SCH.pdf
- * Origin: https://github.com/bigtreetech/BIGTREETECH-SKR-V1.3/blob/master/BTT%20SKR%20V1.4/Hardware/BTT%20SKR%20V1.4-SCH.pdf
- */
+#define BOARD_INFO_NAME "BIGTREE SKR 1.4 TURBO"
+#define SKR_HAS_LPC1769
 
-#define BOARD_INFO_NAME "BTT SKR V1.4 TURBO"
+//
+// EEPROM
+//
+#define FLASH_EEPROM_EMULATION
+//#define SDCARD_EEPROM_EMULATION
 
 //
 // Include SKR 1.4 pins
 //
-#define REQUIRE_LPC1769
-#include "../lpc1768/pins_BTT_SKR_V1_4.h" // ... BTT_SKR_common
+#include "../lpc1768/pins_BTT_SKR_V1_4.h"

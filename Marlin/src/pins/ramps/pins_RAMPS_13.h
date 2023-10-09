@@ -16,14 +16,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * Arduino Mega with RAMPS v1.3 pin assignments
- * ATmega2560, ATmega1280
  *
  * Applies to the following boards:
  *
@@ -32,6 +31,7 @@
  *  RAMPS_13_EFF (Extruder, Fan, Fan)
  *  RAMPS_13_EEF (Extruder, Extruder, Fan)
  *  RAMPS_13_SF  (Spindle, Controller Fan)
+ *
  */
 
 #ifndef BOARD_INFO_NAME
@@ -39,5 +39,4 @@
 #endif
 
 #define IS_RAMPS_13
-
 #include "pins_RAMPS.h"

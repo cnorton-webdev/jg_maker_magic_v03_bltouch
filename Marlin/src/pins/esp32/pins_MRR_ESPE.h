@@ -1,9 +1,9 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (C) 2016 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
- * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
+ * Copyright (C) 2011 Camiel Gubbels / Erik van der Zalm
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,25 +16,24 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * MRR ESPE pin assignments
- *
- * 3D printer control board based on the ESP32 microcontroller.
+ * MRR ESPE is a 3D printer control board based on the ESP32 microcontroller.
  * Supports 5 stepper drivers (using I2S stepper stream), heated bed,
  * single hotend, and LCD controller.
  */
 
-#include "env_validate.h"
-
-#if EXTRUDERS > 2 || E_STEPPERS > 2
-  #error "MRR ESPE supports up to 2 E steppers."
-#elif HAS_MULTI_HOTEND
-  #error "MRR ESPE only supports 1 hotend / E stepper."
+#ifndef ARDUINO_ARCH_ESP32
+  #error "Oops! Select an ESP32 board in 'Tools > Board.'"
+#elif EXTRUDERS > 2 || E_STEPPERS > 2
+  #error "MRR ESPE only supports two E Steppers. Comment out this line to continue."
+#elif HOTENDS > 1
+  #error "MRR ESPE currently supports only one hotend. Comment out this line to continue."
 #endif
 
 #define BOARD_INFO_NAME      "MRR ESPE"
@@ -51,12 +50,14 @@
 //
 // Enable I2S stepper stream
 //
+#undef I2S_STEPPER_STREAM
 #define I2S_STEPPER_STREAM
-#if ENABLED(I2S_STEPPER_STREAM)
-  #define I2S_WS                              26
-  #define I2S_BCK                             25
-  #define I2S_DATA                            27
-#endif
+
+#undef LIN_ADVANCE                                // Currently, I2S stream does not work with linear advance
+
+#define I2S_WS                                26
+#define I2S_BCK                               25
+#define I2S_DATA                              27
 
 //
 // Steppers
@@ -102,7 +103,7 @@
 // Heaters / Fans
 //
 #define HEATER_0_PIN                         145  // 2
-#define FAN0_PIN                             146  // 15
+#define FAN_PIN                              146  // 15
 #define HEATER_BED_PIN                       144  // 4
 
 #define CONTROLLER_FAN_PIN                   147
@@ -113,9 +114,9 @@
 //
 // MicroSD card
 //
-#define SD_MOSI_PIN                           23
-#define SD_MISO_PIN                           19
-#define SD_SCK_PIN                            18
+#define MOSI_PIN                              23
+#define MISO_PIN                              19
+#define SCK_PIN                               18
 #define SDSS                                   5
 #define USES_SHARED_SPI                           // SPI is shared by SD card with TMC SPI drivers
 
@@ -123,17 +124,17 @@
 // LCDs and Controllers //
 //////////////////////////
 
-#if HAS_WIRED_LCD
+#if HAS_GRAPHICAL_LCD
 
   #define LCD_PINS_RS                         13
-  #define LCD_PINS_EN                         17
+  #define LCD_PINS_ENABLE                     17
   #define LCD_PINS_D4                         16
 
   #if ENABLED(CR10_STOCKDISPLAY)
 
     #define BEEPER_PIN                       151
 
-  #elif IS_RRD_FG_SC
+  #elif ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
 
     #define BEEPER_PIN                       151
 
@@ -151,7 +152,7 @@
   #define BTN_EN2                             12
   #define BTN_ENC                             14
 
-#endif // HAS_MARLINUI_U8GLIB
+#endif // HAS_GRAPHICAL_LCD
 
 // Hardware serial pins
 // Add the following to Configuration.h or Configuration_adv.h to assign

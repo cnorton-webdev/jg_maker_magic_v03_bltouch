@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -26,8 +26,6 @@
  *
  * Requires hardware bundle for Arduino:
  * https://github.com/unrepentantgeek/brainwave-arduino
- *
- * Not to be confused with the regular Brainwave controller (https://www.reprap.org/wiki/Brainwave)
  */
 
 /**
@@ -46,7 +44,7 @@
  *  There are two Arduino IDE extensions that are compatible with this board
  *  and with the mainstream Marlin software.
  *
- *  Teensyduino - https://www.pjrc.com/teensy/teensyduino.html
+ *  Teensyduino - http://www.pjrc.com/teensy/teensyduino.html
  *    Select Teensy++ 2.0 in Arduino IDE from the 'Tools > Board' menu
  *
  *    Installation instructions are at the above URL.  Don't bother loading the
@@ -77,7 +75,9 @@
  *   4. The programmer is no longer needed. Remove it.
  */
 
-#include "env_validate.h"
+#ifndef __AVR_AT90USB1286__
+  #error "Oops! Select 'Teensy++ 2.0' or 'Printrboard' in 'Tools > Board.'"
+#endif
 
 #define BOARD_INFO_NAME "Brainwave Pro"
 
@@ -126,8 +126,8 @@
 //
 #define HEATER_0_PIN                          27  // B7
 #define HEATER_BED_PIN                        26  // B6  Bed
-#ifndef FAN0_PIN
-  #define FAN0_PIN                            16  // C6  Fan, PWM3A
+#ifndef FAN_PIN
+  #define FAN_PIN                             16  // C6  Fan, PWM3A
 #endif
 
 //

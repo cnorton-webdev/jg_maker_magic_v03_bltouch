@@ -41,7 +41,7 @@
  *
  */
 /*
- * Support and FAQ: visit <a href="https://www.atmel.com/design-support/">Atmel Support</a>
+ * Support and FAQ: visit <a href="http://www.atmel.com/design-support/">Atmel Support</a>
  */
 
 #ifdef ARDUINO_ARCH_SAM
@@ -50,7 +50,7 @@
 #include "udd.h"
 #include "udc_desc.h"
 
-#if HAS_MEDIA
+#if ENABLED(SDSUPPORT)
 
 /**
  * \defgroup udi_group_desc Descriptors for a USB Device
@@ -189,4 +189,4 @@ UDC_DESC_STORAGE udc_config_t udc_config = {
 
 #endif // ARDUINO_ARCH_SAM
 
-#endif // HAS_MEDIA
+#endif // SDSUPPORT

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -25,17 +25,11 @@
  * RADDS
  */
 
-#include "env_validate.h"
+#ifndef __SAM3X8E__
+  #error "Oops! Select 'Arduino Due' in 'Tools > Board.'"
+#endif
 
 #define BOARD_INFO_NAME "RADDS"
-
-//
-// EEPROM
-//
-#if ANY(NO_EEPROM_SELECTED, I2C_EEPROM)
-  #define I2C_EEPROM
-  #define MARLIN_EEPROM_SIZE              0x2000  // 8K
-#endif
 
 //
 // Servos
@@ -179,11 +173,11 @@
 #define TEMP_4_PIN                             5  // dummy so will compile when PINS_DEBUGGING is enabled
 #define TEMP_BED_PIN                           4  // Analog Input
 
-// SPI for MAX Thermocouple
-#if !HAS_MEDIA
-  #define TEMP_0_CS_PIN                       53
+// SPI for Max6675 or Max31855 Thermocouple
+#if DISABLED(SDSUPPORT)
+  #define MAX6675_SS_PIN                      53
 #else
-  #define TEMP_0_CS_PIN                       49
+  #define MAX6675_SS_PIN                      49
 #endif
 
 //
@@ -196,8 +190,8 @@
   #define HEATER_BED_PIN                       7  // BED
 #endif
 
-#ifndef FAN0_PIN
-  #define FAN0_PIN                             9
+#ifndef FAN_PIN
+  #define FAN_PIN                              9
 #endif
 #define FAN1_PIN                               8
 
@@ -210,6 +204,9 @@
 #ifndef FIL_RUNOUT_PIN
   #define FIL_RUNOUT_PIN                      39  // SERVO2_PIN
 #endif
+
+#define I2C_EEPROM
+#define E2END 0x1FFF                              // 8KB
 
 //
 // M3/M4/M5 - Spindle/Laser Control
@@ -224,12 +221,12 @@
 //
 // LCD / Controller
 //
-#if HAS_WIRED_LCD
+#if HAS_SPI_LCD
 
   #if ENABLED(RADDS_DISPLAY)
 
     #define LCD_PINS_RS                       42
-    #define LCD_PINS_EN                       43
+    #define LCD_PINS_ENABLE                   43
     #define LCD_PINS_D4                       44
     #define LCD_PINS_D5                       45
     #define LCD_PINS_D6                       46
@@ -246,13 +243,13 @@
     #define SDSS                              10
     #define SD_DETECT_PIN                     14
 
-  #elif IS_RRD_FG_SC
+  #elif ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
 
     // The REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER requires
     // an adapter such as https://www.thingiverse.com/thing:1740725
 
     #define LCD_PINS_RS                       42
-    #define LCD_PINS_EN                       43
+    #define LCD_PINS_ENABLE                   43
     #define LCD_PINS_D4                       44
 
     #define BEEPER_PIN                        41
@@ -264,7 +261,7 @@
     #define SDSS                              10
     #define SD_DETECT_PIN                     14
 
-  #elif HAS_U8GLIB_I2C_OLED
+  #elif HAS_SSD1306_OLED_I2C
 
     #define BTN_EN1                           50
     #define BTN_EN2                           52
@@ -276,7 +273,7 @@
   #elif ENABLED(SPARK_FULL_GRAPHICS)
 
     #define LCD_PINS_D4                       29
-    #define LCD_PINS_EN                       27
+    #define LCD_PINS_ENABLE                   27
     #define LCD_PINS_RS                       25
 
     #define BTN_EN1                           35
@@ -285,11 +282,7 @@
 
   #endif // SPARK_FULL_GRAPHICS
 
-  #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
-    #define BTN_ENC_EN                        47  // Detect the presence of the encoder
-  #endif
-
-#endif // HAS_WIRED_LCD
+#endif // HAS_SPI_LCD
 
 #ifndef SDSS
   #define SDSS                                 4

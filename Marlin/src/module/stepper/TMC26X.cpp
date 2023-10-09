@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -30,11 +30,11 @@
 //
 // TMC26X Driver objects and inits
 //
-#if HAS_TMC26X
+#if HAS_DRIVER(TMC26X)
 
 #include "TMC26X.h"
 
-#define _TMC26X_DEFINE(ST) TMC26XStepper stepper##ST(200, ST##_CS_PIN, ST##_STEP_PIN, ST##_DIR_PIN, ST##_CURRENT, int(ST##_RSENSE * 1000))
+#define _TMC26X_DEFINE(ST) TMC26XStepper stepper##ST(200, ST##_CS_PIN, ST##_STEP_PIN, ST##_DIR_PIN, ST##_MAX_CURRENT, ST##_SENSE_RESISTOR)
 
 #if AXIS_DRIVER_TYPE_X(TMC26X)
   _TMC26X_DEFINE(X);
@@ -59,24 +59,6 @@
 #endif
 #if AXIS_DRIVER_TYPE_Z4(TMC26X)
   _TMC26X_DEFINE(Z4);
-#endif
-#if AXIS_DRIVER_TYPE_I(TMC26X)
-  _TMC26X_DEFINE(I);
-#endif
-#if AXIS_DRIVER_TYPE_J(TMC26X)
-  _TMC26X_DEFINE(J);
-#endif
-#if AXIS_DRIVER_TYPE_K(TMC26X)
-  _TMC26X_DEFINE(K);
-#endif
-#if AXIS_DRIVER_TYPE_U(TMC26X)
-  _TMC26X_DEFINE(U);
-#endif
-#if AXIS_DRIVER_TYPE_V(TMC26X)
-  _TMC26X_DEFINE(V);
-#endif
-#if AXIS_DRIVER_TYPE_W(TMC26X)
-  _TMC26X_DEFINE(W);
 #endif
 #if AXIS_DRIVER_TYPE_E0(TMC26X)
   _TMC26X_DEFINE(E0);
@@ -133,24 +115,6 @@ void tmc26x_init_to_defaults() {
   #if AXIS_DRIVER_TYPE_Z4(TMC26X)
     _TMC26X_INIT(Z4);
   #endif
-  #if AXIS_DRIVER_TYPE_I(TMC26X)
-     _TMC26X_INIT(I);
-  #endif
-  #if AXIS_DRIVER_TYPE_J(TMC26X)
-    _TMC26X_INIT(J);
-  #endif
-  #if AXIS_DRIVER_TYPE_K(TMC26X)
-    _TMC26X_INIT(K);
-  #endif
-  #if AXIS_DRIVER_TYPE_U(TMC26X)
-    _TMC26X_INIT(U);
-  #endif
-  #if AXIS_DRIVER_TYPE_V(TMC26X)
-    _TMC26X_INIT(V);
-  #endif
-  #if AXIS_DRIVER_TYPE_W(TMC26X)
-    _TMC26X_INIT(W);
-  #endif
   #if AXIS_DRIVER_TYPE_E0(TMC26X)
     _TMC26X_INIT(E0);
   #endif
@@ -177,4 +141,4 @@ void tmc26x_init_to_defaults() {
   #endif
 }
 
-#endif // HAS_TMC26X
+#endif // TMC26X

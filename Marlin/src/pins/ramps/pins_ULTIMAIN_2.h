@@ -16,32 +16,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * Ultiboard v2.0 pin assignments
- * Schematics (2.1.4):
- * - https://green-candy.osdn.jp/external/MarlinFW/board_schematics/RAMPS/Ultimaker%202.1.4/schema1.png
- * - https://green-candy.osdn.jp/external/MarlinFW/board_schematics/RAMPS/Ultimaker%202.1.4/schema2.png
- * - https://green-candy.osdn.jp/external/MarlinFW/board_schematics/RAMPS/Ultimaker%202.1.4/schema3.png
- * - https://green-candy.osdn.jp/external/MarlinFW/board_schematics/RAMPS/Ultimaker%202.1.4/schema4.png
- * - https://green-candy.osdn.jp/external/MarlinFW/board_schematics/RAMPS/Ultimaker%202.1.4/schema5.png
- * Origins (2.1.4):
- * - https://github.com/Ultimaker/Ultimaker2/blob/master/1546%20ultimainboard%20V2.1.4/schema1.SchDoc
- * - https://github.com/Ultimaker/Ultimaker2/blob/master/1546%20ultimainboard%20V2.1.4/schema2.SchDoc
- * - https://github.com/Ultimaker/Ultimaker2/blob/master/1546%20ultimainboard%20V2.1.4/schema3.SchDoc
- * - https://github.com/Ultimaker/Ultimaker2/blob/master/1546%20ultimainboard%20V2.1.4/schema4.SchDoc
- * - https://github.com/Ultimaker/Ultimaker2/blob/master/1546%20ultimainboard%20V2.1.4/schema5.SchDoc
- * Schematics (Original+):
- * - https://green-candy.osdn.jp/external/MarlinFW/board_schematics/RAMPS/Ultimaker%20Original+/Ultimainboard%20rev.%202.1.1%20altium/schema1.png
- * - https://green-candy.osdn.jp/external/MarlinFW/board_schematics/RAMPS/Ultimaker%20Original+/Ultimainboard%20rev.%202.1.1%20altium/schema2.png
- * - https://green-candy.osdn.jp/external/MarlinFW/board_schematics/RAMPS/Ultimaker%20Original+/Ultimainboard%20rev.%202.1.1%20altium/schema3.png
- * - https://green-candy.osdn.jp/external/MarlinFW/board_schematics/RAMPS/Ultimaker%20Original+/Ultimainboard%20rev.%202.1.1%20altium/schema4.png
- * Origin (Original+): https://github.com/Ultimaker/Ultimaker-Original-Plus/blob/master/1091_Main_board_v2.1.1_(x1)/Ultimainboard%20rev.%202.1.1%20altium.zip
- * ATmega2560
  */
 
 /**
@@ -52,12 +33,13 @@
  *    case light
  */
 
-#define REQUIRE_MEGA2560
-#include "env_validate.h"
+#ifndef __AVR_ATmega2560__
+  #error "Oops! Select 'Arduino/Genuino Mega or Mega 2560' in 'Tools > Board.'"
+#endif
 
 #define BOARD_INFO_NAME         "Ultimaker 2.x"
 #define DEFAULT_MACHINE_NAME    "Ultimaker"
-#define DEFAULT_SOURCE_CODE_URL "github.com/Ultimaker/Marlin"
+#define DEFAULT_SOURCE_CODE_URL "https://github.com/Ultimaker/Marlin"
 
 //
 // Limit Switches
@@ -112,13 +94,11 @@
 #define HEATER_1_PIN                           3
 #define HEATER_BED_PIN                         4
 
-#ifndef FAN0_PIN
-  #define FAN0_PIN                             7
+#ifndef FAN_PIN
+  #define FAN_PIN                              7
 #endif
 
-#ifndef E0_AUTO_FAN_PIN
-  #define E0_AUTO_FAN_PIN                     77
-#endif
+#define ORIG_E0_AUTO_FAN_PIN                  77
 
 //
 // Misc. Functions
@@ -126,8 +106,8 @@
 #define SDSS                                  53
 #define SD_DETECT_PIN                         39
 #define LED_PIN                                8
-//#define SAFETY_TRIGGERED_PIN                28  // PIN to detect the safety circuit has triggered
-//#define MAIN_VOLTAGE_MEASURE_PIN            14  // ANALOG PIN to measure the main voltage, with a 100k - 4k7 resitor divider.
+#define SAFETY_TRIGGERED_PIN                  28  // PIN to detect the safety circuit has triggered
+#define MAIN_VOLTAGE_MEASURE_PIN              14  // ANALOG PIN to measure the main voltage, with a 100k - 4k7 resitor divider.
 
 //
 // LCD / Controller
@@ -135,7 +115,7 @@
 #define BEEPER_PIN                            18
 
 #define LCD_PINS_RS                           20
-#define LCD_PINS_EN                           15
+#define LCD_PINS_ENABLE                       15
 #define LCD_PINS_D4                           14
 #define LCD_PINS_D5                           21
 #define LCD_PINS_D6                            5
@@ -151,9 +131,9 @@
 //
 #if HAS_CUTTER                                    // use the LED_PIN for spindle speed control or case light
   #undef LED_PIN
-  #define SPINDLE_LASER_PWM_PIN                8  // Hardware PWM
-  #define SPINDLE_LASER_ENA_PIN               17  // Pullup!
   #define SPINDLE_DIR_PIN                     16
+  #define SPINDLE_LASER_ENA_PIN               17  // Pullup!
+  #define SPINDLE_LASER_PWM_PIN                8  // Hardware PWM
 #else
   #undef LED_PIN
   #define CASE_LIGHT_PIN                       8

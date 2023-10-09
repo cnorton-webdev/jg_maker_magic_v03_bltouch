@@ -16,18 +16,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 #include "../lcdprint.h"
+#if HAS_GRAPHICAL_LCD
+  #include "../dogm/ultralcd_DOGM.h"
+#endif
 
-#define _MENU_ITEM_ADDON_START(N,X) do{ \
+#define MENU_ITEM_ADDON_START(X) do{ \
   if (ui.should_draw() && _menuLineNr == _thisItemNr - 1) { \
-    N(X)
-
-#define MENU_ITEM_ADDON_START(X)    _MENU_ITEM_ADDON_START(SETCURSOR_X,    X)
-#define MENU_ITEM_ADDON_START_RJ(X) _MENU_ITEM_ADDON_START(SETCURSOR_X_RJ, X)
+    SETCURSOR(X, _lcdLineNr)
 
 #define MENU_ITEM_ADDON_END() } }while(0)

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -25,10 +25,10 @@
  * MKS Robin Lite 3 (STM32F103RCT6) board pin assignments
  */
 
-#include "env_validate.h"
-
-#if HOTENDS > 2 || E_STEPPERS > 2
-  #error "MKS Robin Lite3 supports up to 2 hotends / E steppers."
+#ifndef __STM32F1__
+  #error "Oops! Select an STM32F1 board in 'Tools > Board.'"
+#elif HOTENDS > 2 || E_STEPPERS > 2
+  #error "MKS Robin Lite3 supports up to 2 hotends / E-steppers. Comment out this line to continue."
 #endif
 
 #ifndef BOARD_INFO_NAME
@@ -36,10 +36,9 @@
 #endif
 #define BOARD_WEBSITE_URL "github.com/makerbase-mks"
 
-#define BOARD_NO_NATIVE_USB
-
 //#define DISABLE_DEBUG
 #define DISABLE_JTAG
+#define ENABLE_SPI2
 
 //
 // Servos
@@ -82,26 +81,26 @@
 //
 #define HEATER_0_PIN                        PC9
 #define HEATER_1_PIN                        PC7
-#define FAN0_PIN                            PA8
+#define FAN_PIN                             PA8
 #define HEATER_BED_PIN                      PC8
 
 //
 // Temperature Sensors
 //
-#define TEMP_BED_PIN                        PA1   // TB
-#define TEMP_0_PIN                          PA0   // TH1
-#define TEMP_1_PIN                          PA2   // TH2
+#define TEMP_BED_PIN                        PA1   //TB
+#define TEMP_0_PIN                          PA0   //TH1
+#define TEMP_1_PIN                          PA2   //TH2
 
 #define FIL_RUNOUT_PIN                      PB10  // MT_DET
 
 //
 // LCD Pins
 //
-#if HAS_WIRED_LCD
+#if HAS_SPI_LCD
 
   #define BEEPER_PIN                        PC1
   #define BTN_ENC                           PC3
-  #define LCD_PINS_EN                       PA4
+  #define LCD_PINS_ENABLE                   PA4
   #define LCD_PINS_RS                       PA5
   #define BTN_EN1                           PB11
   #define BTN_EN2                           PB0
@@ -116,44 +115,39 @@
     #define DOGLCD_SCK                      PB13
     #define DOGLCD_MOSI                     PB15
 
-  #elif IS_TFTGLCD_PANEL
-
-    #if ENABLED(TFTGLCD_PANEL_SPI)
-      #define TFTGLCD_CS                    PB11
-    #endif
+    // Required for MKS_MINI_12864 with this board
+    #define MKS_LCD12864B
+    #undef SHOW_BOOTSCREEN
 
   #else                                           // !MKS_MINI_12864
 
     #define LCD_PINS_D4                     PA6
-    #if IS_ULTIPANEL
+    #if ENABLED(ULTIPANEL)
       #define LCD_PINS_D5                   PA7
       #define LCD_PINS_D6                   PC4
       #define LCD_PINS_D7                   PC5
-
-      #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
-        #define BTN_ENC_EN           LCD_PINS_D7  // Detect the presence of the encoder
-      #endif
-
     #endif
 
   #endif // !MKS_MINI_12864
 
-  #define BOARD_ST7920_DELAY_1               125
-  #define BOARD_ST7920_DELAY_2               125
-  #define BOARD_ST7920_DELAY_3               125
-
-#endif // HAS_WIRED_LCD
+#endif // HAS_SPI_LCD
 
 //
 // SD Card
 //
+#define ENABLE_SPI2
 #define SD_DETECT_PIN                       PC10
+#define SCK_PIN                             PB13
+#define MISO_PIN                            PB14
+#define MOSI_PIN                            PB15
+#define SS_PIN                              PA15
 
-//
-// SPI
-//
-#define SPI_DEVICE                             2  // Maple
-#define SD_SCK_PIN                          PB13
-#define SD_MISO_PIN                         PB14
-#define SD_MOSI_PIN                         PB15
-#define SD_SS_PIN                           PA15
+#ifndef ST7920_DELAY_1
+  #define ST7920_DELAY_1           DELAY_NS(125)
+#endif
+#ifndef ST7920_DELAY_2
+  #define ST7920_DELAY_2           DELAY_NS(125)
+#endif
+#ifndef ST7920_DELAY_3
+  #define ST7920_DELAY_3           DELAY_NS(125)
+#endif

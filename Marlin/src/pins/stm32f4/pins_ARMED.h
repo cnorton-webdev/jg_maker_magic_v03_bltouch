@@ -16,17 +16,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+//  https://github.com/ktand/Armed
+
 #pragma once
 
-// https://github.com/ktand/Armed
-
-#include "env_validate.h"
-
-#if HOTENDS > 2 || E_STEPPERS > 2
-  #error "Arm'ed supports up to 2 hotends / E steppers."
+#ifndef STM32F4
+  #error "Oops! Select an STM32F4 board in 'Tools > Board.'"
+#elif HOTENDS > 2 || E_STEPPERS > 2
+  #error "Arm'ed supports up to 2 hotends / E-steppers."
 #endif
 
 #ifndef ARMED_V1_0
@@ -37,10 +38,10 @@
 #define BOARD_INFO_NAME      "Arm'ed"
 #define DEFAULT_MACHINE_NAME BOARD_INFO_NAME
 
-#if NO_EEPROM_SELECTED
-  #define I2C_EEPROM
-  #define MARLIN_EEPROM_SIZE              0x1000  // 4K
-#endif
+#define I2C_EEPROM
+
+#undef E2END                                      // Defined in Arduino Core STM32 to be used with EEPROM emulation. This board uses a real EEPROM.
+#define E2END 0xFFF                               // 4KB
 
 //
 // Limit Switches
@@ -128,7 +129,7 @@
 #define HEATER_1_PIN                        PA2   // Hardware PWM
 #define HEATER_BED_PIN                      PA0   // Hardware PWM
 
-#define FAN0_PIN                            PC6   // Hardware PWM, Part cooling fan
+#define FAN_PIN                             PC6   // Hardware PWM, Part cooling fan
 #define FAN1_PIN                            PC7   // Hardware PWM, Extruder fan
 #define FAN2_PIN                            PC8   // Hardware PWM, Controller fan
 
@@ -149,7 +150,7 @@
 
 #if ENABLED(FYSETC_MINI_12864)
   //
-  // See https://wiki.fysetc.com/Mini12864_Panel/
+  // See https://wiki.fysetc.com/Mini12864_Panel/?fbclid=IwAR1FyjuNdVOOy9_xzky3qqo_WeM5h-4gpRnnWhQr_O1Ef3h0AFnFXmCehK8
   //
   #define DOGLCD_A0                         PE9
   #define DOGLCD_CS                         PE8
@@ -158,7 +159,7 @@
 
   #define LCD_RESET_PIN                     PB12  // Must be high or open for LCD to operate normally.
 
-  #if ANY(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
+  #if EITHER(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
     #ifndef RGB_LED_R_PIN
       #define RGB_LED_R_PIN                 PB13
     #endif
@@ -173,7 +174,7 @@
   #endif
 #else
   #define LCD_PINS_RS                       PE9
-  #define LCD_PINS_EN                       PE8
+  #define LCD_PINS_ENABLE                   PE8
   #define LCD_PINS_D4                       PB12
   #define LCD_PINS_D5                       PB13
   #define LCD_PINS_D6                       PB14
@@ -205,6 +206,9 @@
 
 #if HAS_TMC_UART
   // TMC2208/TMC2209 stepper drivers
+  //
+  // Software serial
+  //
   #define X_SERIAL_TX_PIN               EXT0_PIN
   #define X_SERIAL_RX_PIN               EXT0_PIN
 
@@ -223,8 +227,5 @@
   #define Z2_SERIAL_RX_PIN              EXT4_PIN
   #define Z2_SERIAL_TX_PIN              EXT4_PIN
 
-  #ifndef TMC_BAUD_RATE
-    #define TMC_BAUD_RATE                  19200
-  #endif
-
-#endif // HAS_TMC_UART
+  #define TMC_BAUD_RATE 19200
+#endif

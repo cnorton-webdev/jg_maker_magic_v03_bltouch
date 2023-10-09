@@ -16,23 +16,19 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * AZTEEG_X3_PRO (Arduino Mega) pin assignments
- * Schematic: https://green-candy.osdn.jp/external/MarlinFW/board_schematics/AZTEEG_X3_PRO/AZTEEG%20X3%20PRO%201.0%20PUB.pdf
- * Origin: http://files.panucatt.com/datasheets/x3pro_sch_v1.0.zip
- * ATmega2560
  */
 
-#define REQUIRE_MEGA2560
-#include "env_validate.h"
-
-#if HOTENDS > 5 || E_STEPPERS > 5
-  #error "Azteeg X3 Pro supports up to 5 hotends / E steppers."
+#ifndef __AVR_ATmega2560__
+  #error "Oops! Select 'Arduino/Genuino Mega or Mega 2560' in 'Tools > Board.'"
+#elif HOTENDS > 5 || E_STEPPERS > 5
+  #error "Azteeg X3 Pro supports up to 5 hotends / E-steppers. Comment out this line to continue."
 #endif
 
 #define BOARD_INFO_NAME "Azteeg X3 Pro"
@@ -56,8 +52,8 @@
 #define Y_STOP_PIN                            14
 #define Z_STOP_PIN                            18
 
-#ifndef FAN0_PIN
-  #define FAN0_PIN                             6
+#ifndef FAN_PIN
+  #define FAN_PIN                              6
 #endif
 
 #if ENABLED(CASE_LIGHT_ENABLE) && !PIN_EXISTS(CASE_LIGHT)
@@ -71,10 +67,10 @@
 
 // DIGIPOT slave addresses
 #ifndef DIGIPOT_I2C_ADDRESS_A
-  #define DIGIPOT_I2C_ADDRESS_A             0x2C  // unshifted slave address for first DIGIPOT 0x2C (0x58 <- 0x2C << 1)
+  #define DIGIPOT_I2C_ADDRESS_A 0x2C              // unshifted slave address for first DIGIPOT 0x2C (0x58 <- 0x2C << 1)
 #endif
 #ifndef DIGIPOT_I2C_ADDRESS_B
-  #define DIGIPOT_I2C_ADDRESS_B             0x2E  // unshifted slave address for second DIGIPOT 0x2E (0x5C <- 0x2E << 1)
+  #define DIGIPOT_I2C_ADDRESS_B 0x2E              // unshifted slave address for second DIGIPOT 0x2E (0x5C <- 0x2E << 1)
 #endif
 
 //
@@ -122,22 +118,11 @@
   #define CONTROLLER_FAN_PIN                   4  // Pin used for the fan to cool motherboard (-1 to disable)
 #endif
 
-//
-// Auto fans
-//
-#define AUTO_FAN_PIN                           5
-#ifndef E0_AUTO_FAN_PIN
-  #define E0_AUTO_FAN_PIN           AUTO_FAN_PIN
-#endif
-#ifndef E1_AUTO_FAN_PIN
-  #define E1_AUTO_FAN_PIN           AUTO_FAN_PIN
-#endif
-#ifndef E2_AUTO_FAN_PIN
-  #define E2_AUTO_FAN_PIN           AUTO_FAN_PIN
-#endif
-#ifndef E3_AUTO_FAN_PIN
-  #define E3_AUTO_FAN_PIN           AUTO_FAN_PIN
-#endif
+// Fans/Water Pump to cool the hotend cool side.
+#define ORIG_E0_AUTO_FAN_PIN                   5
+#define ORIG_E1_AUTO_FAN_PIN                   5
+#define ORIG_E2_AUTO_FAN_PIN                   5
+#define ORIG_E3_AUTO_FAN_PIN                   5
 
 //
 // LCD / Controller
@@ -161,7 +146,7 @@
 #if ENABLED(CASE_LIGHT_ENABLE) && PIN_EXISTS(CASE_LIGHT) && defined(DOGLCD_A0) && DOGLCD_A0 == CASE_LIGHT_PIN
   #undef DOGLCD_A0                                // Steal pin 44 for the case light; if you have a Viki2 and have connected it
   #define DOGLCD_A0                           57  // following the Panucatt wiring diagram, you may need to tweak these pin assignments
-                                                  // as the wiring diagram uses pin 44 for DOGLCD_A0.
+                                // as the wiring diagram uses pin 44 for DOGLCD_A0
 #endif
 
 //

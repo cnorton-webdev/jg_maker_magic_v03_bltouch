@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -25,7 +25,7 @@
  * Release version. Leave the Marlin version or apply a custom scheme.
  */
 #ifndef SHORT_BUILD_VERSION
-  #define SHORT_BUILD_VERSION "2.1.1"
+  #define SHORT_BUILD_VERSION "2.0.5.4_Magic_V0.3.3" //
 #endif
 
 /**
@@ -33,7 +33,7 @@
  * vendor name, download location, GitHub account, etc.
  */
 #ifndef DETAILED_BUILD_VERSION
-  #define DETAILED_BUILD_VERSION SHORT_BUILD_VERSION
+  #define DETAILED_BUILD_VERSION SHORT_BUILD_VERSION " (GitHub)"
 #endif
 
 /**
@@ -42,7 +42,7 @@
  * version was tagged.
  */
 #ifndef STRING_DISTRIBUTION_DATE
-  #define STRING_DISTRIBUTION_DATE "2023-10-08"
+  #define STRING_DISTRIBUTION_DATE "2023-10-05"
 #endif
 
 /**
@@ -52,7 +52,7 @@
  * to alert users to major changes.
  */
 
-#define MARLIN_HEX_VERSION 02010300
+#define MARLIN_HEX_VERSION 020005
 #ifndef REQUIRED_CONFIGURATION_H_VERSION
   #define REQUIRED_CONFIGURATION_H_VERSION MARLIN_HEX_VERSION
 #endif
@@ -66,14 +66,14 @@
  * (Other behaviors are given by the firmware version and capabilities report.)
  */
 #ifndef PROTOCOL_VERSION
-  #define PROTOCOL_VERSION "2.0"
+  #define PROTOCOL_VERSION "1.0"
 #endif
 
 /**
  * Define a generic printer name to be output to the LCD after booting Marlin.
  */
 #ifndef MACHINE_NAME
-  #define MACHINE_NAME "Magic Printer"
+  #define MACHINE_NAME "Magic Printer" // CNorton
 #endif
 
 /**
@@ -82,7 +82,7 @@
  * providing the source code to your customers.)
  */
 #ifndef SOURCE_CODE_URL
-  #define SOURCE_CODE_URL "github.com/by-johnchen/jg_maker_magic_v03_bltouch"
+  #define SOURCE_CODE_URL "https://github.com/by-johnchen/Marlin"
 #endif
 
 /**
@@ -97,7 +97,7 @@
    * documentation about a specific Marlin release. Displayed in the Info Menu.
    */
 #ifndef WEBSITE_URL
-  #define WEBSITE_URL "devsoft.app"
+  #define WEBSITE_URL "https://github.com/by-johnchen/jg_maker_magic_v03_bltouch"
 #endif
 
 /**
@@ -105,18 +105,18 @@
  * Currently only supported by DUE platform
  */
 #ifndef USB_DEVICE_VENDOR_ID
-  #define USB_DEVICE_VENDOR_ID            0x03EB /* ATMEL VID */
+  #define  USB_DEVICE_VENDOR_ID           0x03EB /* ATMEL VID */
 #endif
 #ifndef USB_DEVICE_PRODUCT_ID
-  #define USB_DEVICE_PRODUCT_ID           0x2424 /* MSC / CDC */
+  #define  USB_DEVICE_PRODUCT_ID          0x2424 /* MSC / CDC */
 #endif
 //! USB Device string definitions (Optional)
 #ifndef USB_DEVICE_MANUFACTURE_NAME
-  #define USB_DEVICE_MANUFACTURE_NAME     WEBSITE_URL
+  #define  USB_DEVICE_MANUFACTURE_NAME    WEBSITE_URL
 #endif
 #ifdef CUSTOM_MACHINE_NAME
-  #define USB_DEVICE_PRODUCT_NAME         CUSTOM_MACHINE_NAME
+  #define  USB_DEVICE_PRODUCT_NAME        CUSTOM_MACHINE_NAME
 #else
-  #define USB_DEVICE_PRODUCT_NAME         MACHINE_NAME
+  #define  USB_DEVICE_PRODUCT_NAME        MACHINE_NAME
 #endif
-#define USB_DEVICE_SERIAL_NAME            "Magic 3D Printer"
+#define  USB_DEVICE_SERIAL_NAME           "123985739853"

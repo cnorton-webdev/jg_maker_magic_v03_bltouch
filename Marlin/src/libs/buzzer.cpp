@@ -16,17 +16,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
 #include "../inc/MarlinConfig.h"
 
-#if HAS_BEEPER
+#if USE_BEEPER
 
 #include "buzzer.h"
 #include "../module/temperature.h"
-#include "../lcd/marlinui.h"
 
 #if ENABLED(EXTENSIBLE_UI)
   #include "../lcd/extui/ui_api.h"
@@ -45,17 +44,15 @@ Buzzer buzzer;
  * @param frequency Frequency of the tone in hertz
  */
 void Buzzer::tone(const uint16_t duration, const uint16_t frequency/*=0*/) {
-  if (!ui.sound_on) return;
   while (buffer.isFull()) {
     tick();
-    thermalManager.task();
+    thermalManager.manage_heater();
   }
   tone_t tone = { duration, frequency };
   buffer.enqueue(tone);
 }
 
 void Buzzer::tick() {
-  if (!ui.sound_on) return;
   const millis_t now = millis();
 
   if (!state.endtime) {
@@ -65,7 +62,7 @@ void Buzzer::tick() {
     state.endtime = now + state.tone.duration;
 
     if (state.tone.frequency > 0) {
-      #if ENABLED(EXTENSIBLE_UI) && DISABLED(EXTUI_LOCAL_BEEPER)
+      #if ENABLED(EXTENSIBLE_UI)
         CRITICAL_SECTION_START();
         ExtUI::onPlayTone(state.tone.frequency, state.tone.duration);
         CRITICAL_SECTION_END();
@@ -81,4 +78,4 @@ void Buzzer::tick() {
   else if (ELAPSED(now, state.endtime)) reset();
 }
 
-#endif // HAS_BEEPER
+#endif // USE_BEEPER

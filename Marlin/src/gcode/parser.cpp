@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -27,6 +27,10 @@
 #include "parser.h"
 
 #include "../MarlinCore.h"
+
+#if NUM_SERIAL > 1
+  #include "queue.h"
+#endif
 
 // Must be declared for allocation and to satisfy the linker
 // Zero values need no initialization.
@@ -45,15 +49,15 @@ char *GCodeParser::command_ptr,
      *GCodeParser::string_arg,
      *GCodeParser::value_ptr;
 char GCodeParser::command_letter;
-uint16_t GCodeParser::codenum;
+int GCodeParser::codenum;
 
-#if USE_GCODE_SUBCODES
+#if ENABLED(USE_GCODE_SUBCODES)
   uint8_t GCodeParser::subcode;
 #endif
 
 #if ENABLED(GCODE_MOTION_MODES)
   int16_t GCodeParser::motion_mode_codenum = -1;
-  #if USE_GCODE_SUBCODES
+  #if ENABLED(USE_GCODE_SUBCODES)
     uint8_t GCodeParser::motion_mode_subcode;
   #endif
 #endif
@@ -79,7 +83,9 @@ void GCodeParser::reset() {
   string_arg = nullptr;                 // No whole line argument
   command_letter = '?';                 // No command letter
   codenum = 0;                          // No command code
-  TERN_(USE_GCODE_SUBCODES, subcode = 0); // No command sub-code
+  #if ENABLED(USE_GCODE_SUBCODES)
+    subcode = 0;                        // No command sub-code
+  #endif
   #if ENABLED(FASTER_GCODE_PARSER)
     codebits = 0;                       // No codes yet
     //ZERO(param);                      // No parameters (should be safe to comment out this line)
@@ -106,17 +112,16 @@ void GCodeParser::reset() {
 
 #endif
 
-/**
- * Populate the command line state (command_letter, codenum, subcode, and string_arg)
- * by parsing a single line of GCode. 58 bytes of SRAM are used to speed up seen/value.
- */
+// Populate all fields by parsing a single line of GCode
+// 58 bytes of SRAM are used to speed up seen/value
 void GCodeParser::parse(char *p) {
 
   reset(); // No codes to report
 
   auto uppercase = [](char c) {
-    if (TERN0(GCODE_CASE_INSENSITIVE, WITHIN(c, 'a', 'z')))
-      c += 'A' - 'a';
+    #if ENABLED(GCODE_CASE_INSENSITIVE)
+      if (WITHIN(c, 'a', 'z')) c += 'A' - 'a';
+    #endif
     return c;
   };
 
@@ -125,7 +130,9 @@ void GCodeParser::parse(char *p) {
 
   // Skip N[-0-9] if included in the command line
   if (uppercase(*p) == 'N' && NUMERIC_SIGNED(p[1])) {
-    //TERN_(FASTER_GCODE_PARSER, set('N', p + 1)); // (optional) Set the 'N' parameter value
+    #if ENABLED(FASTER_GCODE_PARSER)
+      //set('N', p + 1);     // (optional) Set the 'N' parameter value
+    #endif
     p += 2;                  // skip N[-0-9]
     while (NUMERIC(*p)) ++p; // skip [0-9]*
     while (*p == ' ')   ++p; // skip [ ]*
@@ -145,39 +152,26 @@ void GCodeParser::parse(char *p) {
     starpos[1] = '\0';
   }
 
-  #if ANY(MARLIN_DEV_MODE, SWITCHING_TOOLHEAD, MAGNETIC_SWITCHING_TOOLHEAD, ELECTROMAGNETIC_SWITCHING_TOOLHEAD)
-    #define SIGNED_CODENUM 1
+  #if ENABLED(GCODE_MOTION_MODES)
+    #if ENABLED(ARC_SUPPORT)
+      #define GTOP 3
+    #else
+      #define GTOP 1
+    #endif
   #endif
 
-  /**
-   * Screen for good command letters.
-   * With Realtime Reporting, commands S000, P000, and R000 are allowed.
-   */
-  #if ENABLED(REALTIME_REPORTING_COMMANDS)
-    switch (letter) {
-      case 'P': case 'R' ... 'S': {
-        uint8_t digits = 0;
-        char *a = p;
-        while (*a++ == '0') digits++; // Count up '0' characters
-        if (digits == 3) {            // Three '0' digits is a good command
-          codenum = 0;
-          command_letter = letter;
-          return;
-        }
-      }
-    }
-  #endif
-
-  /**
-   * Screen for good command letters. G, M, and T are always accepted.
-   * With Motion Modes enabled any axis letter can come first.
-   */
+  // Bail if the letter is not G, M, or T
+  // (or a valid parameter for the current motion mode)
   switch (letter) {
-    case 'G': case 'M': case 'T': TERN_(MARLIN_DEV_MODE, case 'D':) {
+
+    case 'G': case 'M': case 'T':
+    #if ENABLED(CANCEL_OBJECTS)
+      case 'O':
+    #endif
       // Skip spaces to get the numeric part
       while (*p == ' ') p++;
 
-      #if HAS_PRUSA_MMU2
+      #if ENABLED(PRUSA_MMU2)
         if (letter == 'T') {
           // check for special MMU2 T?/Tx/Tc commands
           if (*p == '?' || *p == 'x' || *p == 'c') {
@@ -189,37 +183,22 @@ void GCodeParser::parse(char *p) {
       #endif
 
       // Bail if there's no command code number
-      if (!TERN(SIGNED_CODENUM, NUMERIC_SIGNED(*p), NUMERIC(*p))) {
-        if (TERN0(HAS_MULTI_EXTRUDER, letter == 'T')) {
-          p[0] = '*'; p[1] = '\0'; string_arg = p; // Convert 'T' alone into 'T*'
-          command_letter = letter;
-        }
-        return;
-      }
+      if (!NUMERIC(*p)) return;
 
       // Save the command letter at this point
       // A '?' signifies an unknown command
       command_letter = letter;
 
-      #if ENABLED(SIGNED_CODENUM)
-        int sign = 1; // Allow for a negative code like D-1 or T-1
-        if (*p == '-') { sign = -1; ++p; }
-      #endif
-
       // Get the code number - integer digits only
       codenum = 0;
-
-      do { codenum = codenum * 10 + *p++ - '0'; } while (NUMERIC(*p));
-
-      // Apply the sign, if any
-      TERN_(SIGNED_CODENUM, codenum *= sign);
+      do { codenum *= 10, codenum += *p++ - '0'; } while (NUMERIC(*p));
 
       // Allow for decimal point in command
-      #if USE_GCODE_SUBCODES
+      #if ENABLED(USE_GCODE_SUBCODES)
         if (*p == '.') {
           p++;
           while (NUMERIC(*p))
-            subcode = subcode * 10 + *p++ - '0';
+          subcode *= 10, subcode += *p++ - '0';
         }
       #endif
 
@@ -227,56 +206,57 @@ void GCodeParser::parse(char *p) {
       while (*p == ' ') p++;
 
       #if ENABLED(GCODE_MOTION_MODES)
-        if (letter == 'G'
-          && (codenum <= TERN(ARC_SUPPORT, 3, 1) || TERN0(BEZIER_CURVE_SUPPORT, codenum == 5) || TERN0(G38_PROBE_TARGET, codenum == 38))
+        if (letter == 'G' && (codenum <= GTOP || codenum == 5
+                                #if ENABLED(G38_PROBE_TARGET)
+                                  || codenum == 38
+                                #endif
+                             )
         ) {
           motion_mode_codenum = codenum;
-          TERN_(USE_GCODE_SUBCODES, motion_mode_subcode = subcode);
+          #if ENABLED(USE_GCODE_SUBCODES)
+            motion_mode_subcode = subcode;
+          #endif
         }
       #endif
 
-    } break;
+      break;
 
     #if ENABLED(GCODE_MOTION_MODES)
-
-      #if ANY(BEZIER_CURVE_SUPPORT, ARC_SUPPORT)
-        case 'I' ... 'J': case 'P':
-          if (TERN1(BEZIER_CURVE_SUPPORT, motion_mode_codenum != 5)
-            && TERN1(ARC_P_CIRCLES, !WITHIN(motion_mode_codenum, 2, 3))
-          ) return;
-      #endif
-
-      #if ENABLED(BEZIER_CURVE_SUPPORT)
-        case 'Q': if (motion_mode_codenum != 5) return;
-      #endif
-
       #if ENABLED(ARC_SUPPORT)
-        case 'R': if (!WITHIN(motion_mode_codenum, 2, 3)) return;
+        case 'I': case 'J': case 'R':
+          if (motion_mode_codenum != 2 && motion_mode_codenum != 3) return;
       #endif
-
-      LOGICAL_AXIS_GANG(case 'E':, case 'X':, case 'Y':, case 'Z':, case AXIS4_NAME:, case AXIS5_NAME:, case AXIS6_NAME:, case AXIS7_NAME:, case AXIS8_NAME:, case AXIS9_NAME:)
-      case 'F':
+      case 'P': case 'Q':
+        if (motion_mode_codenum != 5) return;
+      case 'X': case 'Y': case 'Z': case 'E': case 'F':
         if (motion_mode_codenum < 0) return;
         command_letter = 'G';
         codenum = motion_mode_codenum;
-        TERN_(USE_GCODE_SUBCODES, subcode = motion_mode_subcode);
+        #if ENABLED(USE_GCODE_SUBCODES)
+          subcode = motion_mode_subcode;
+        #endif
         p--; // Back up one character to use the current parameter
-        break;
-
-    #endif
+      break;
+    #endif // GCODE_MOTION_MODES
 
     default: return;
   }
 
   // The command parameters (if any) start here, for sure!
 
-  IF_DISABLED(FASTER_GCODE_PARSER, command_args = p); // Scan for parameters in seen()
+  #if DISABLED(FASTER_GCODE_PARSER)
+    command_args = p; // Scan for parameters in seen()
+  #endif
 
   // Only use string_arg for these M codes
   if (letter == 'M') switch (codenum) {
-    TERN_(GCODE_MACROS, case 810 ... 819:)
-    TERN_(EXPECTED_PRINTER_CHECK, case 16:)
-    case 23: case 28: case 30: case 117 ... 118: case 928:
+    #if ENABLED(GCODE_MACROS)
+      case 810 ... 819:
+    #endif
+    #if ENABLED(EXPECTED_PRINTER_CHECK)
+      case 16:
+    #endif
+    case 23: case 28: case 30: case 117: case 118: case 928:
       string_arg = unescape_string(p);
       return;
     default: break;
@@ -302,7 +282,7 @@ void GCodeParser::parse(char *p) {
 
     // Special handling for M32 [P] !/path/to/file.g#
     // The path must be the last parameter
-    if (param == '!' && is_command('M', 32)) {
+    if (param == '!' && letter == 'M' && codenum == 32) {
       string_arg = p;                           // Name starts after '!'
       char * const lb = strchr(p, '#');         // Already seen '#' as SD char (to pause buffering)
       if (lb) *lb = '\0';                       // Safe to mark the end of the filename
@@ -339,7 +319,7 @@ void GCodeParser::parse(char *p) {
 
       #if ENABLED(DEBUG_GCODE_PARSER)
         if (debug) {
-          SERIAL_ECHOPGM("Got param ", AS_CHAR(param), " at index ", p - command_ptr - 1);
+          SERIAL_ECHOPAIR("Got param ", param, " at index ", (int)(p - command_ptr - 1));
           if (has_val) SERIAL_ECHOPGM(" (has_val)");
         }
       #endif
@@ -347,18 +327,22 @@ void GCodeParser::parse(char *p) {
       if (!has_val && !string_arg) {            // No value? First time, keep as string_arg
         string_arg = p - 1;
         #if ENABLED(DEBUG_GCODE_PARSER)
-          if (debug) SERIAL_ECHOPGM(" string_arg: ", hex_address((void*)string_arg)); // DEBUG
+          if (debug) SERIAL_ECHOPAIR(" string_arg: ", hex_address((void*)string_arg)); // DEBUG
         #endif
       }
 
-      if (TERN0(DEBUG_GCODE_PARSER, debug)) SERIAL_EOL();
+      #if ENABLED(DEBUG_GCODE_PARSER)
+        if (debug) SERIAL_EOL();
+      #endif
 
-      TERN_(FASTER_GCODE_PARSER, set(param, valptr)); // Set parameter exists and pointer (nullptr for no value)
+      #if ENABLED(FASTER_GCODE_PARSER)
+        set(param, valptr);                     // Set parameter exists and pointer (nullptr for no value)
+      #endif
     }
     else if (!string_arg) {                     // Not A-Z? First time, keep as the string_arg
       string_arg = p - 1;
       #if ENABLED(DEBUG_GCODE_PARSER)
-        if (debug) SERIAL_ECHOPGM(" string_arg: ", hex_address((void*)string_arg)); // DEBUG
+        if (debug) SERIAL_ECHOPAIR(" string_arg: ", hex_address((void*)string_arg)); // DEBUG
       #endif
     }
 
@@ -396,7 +380,7 @@ void GCodeParser::unknown_command_warning() {
 #if ENABLED(DEBUG_GCODE_PARSER)
 
   void GCodeParser::debug() {
-    SERIAL_ECHOPGM("Command: ", command_ptr, " (", command_letter);
+    SERIAL_ECHOPAIR("Command: ", command_ptr, " (", command_letter);
     SERIAL_ECHO(codenum);
     SERIAL_ECHOLNPGM(")");
     #if ENABLED(FASTER_GCODE_PARSER)
@@ -404,18 +388,18 @@ void GCodeParser::unknown_command_warning() {
       for (char c = 'A'; c <= 'Z'; ++c) if (seen(c)) SERIAL_CHAR(c, ' ');
       SERIAL_CHAR('}');
     #else
-      SERIAL_ECHOPGM(" args: { ", command_args, " }");
+      SERIAL_ECHOPAIR(" args: { ", command_args, " }");
     #endif
     if (string_arg) {
-      SERIAL_ECHOPGM(" string: \"", string_arg);
+      SERIAL_ECHOPAIR(" string: \"", string_arg);
       SERIAL_CHAR('"');
     }
     SERIAL_ECHOLNPGM("\n");
     for (char c = 'A'; c <= 'Z'; ++c) {
       if (seen(c)) {
-        SERIAL_ECHOPGM("Code '", c); SERIAL_ECHOPGM("':");
+        SERIAL_ECHOPAIR("Code '", c); SERIAL_ECHOPGM("':");
         if (has_value()) {
-          SERIAL_ECHOLNPGM(
+          SERIAL_ECHOLNPAIR(
             "\n    float: ", value_float(),
             "\n     long: ", value_long(),
             "\n    ulong: ", value_ulong(),
@@ -423,8 +407,8 @@ void GCodeParser::unknown_command_warning() {
             "\n   sec-ms: ", value_millis_from_seconds(),
             "\n      int: ", value_int(),
             "\n   ushort: ", value_ushort(),
-            "\n     byte: ", value_byte(),
-            "\n     bool: ", value_bool(),
+            "\n     byte: ", (int)value_byte(),
+            "\n     bool: ", (int)value_bool(),
             "\n   linear: ", value_linear_units(),
             "\n  celsius: ", value_celsius()
           );

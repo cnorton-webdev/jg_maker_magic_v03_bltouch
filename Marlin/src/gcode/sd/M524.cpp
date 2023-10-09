@@ -16,39 +16,25 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
 #include "../../inc/MarlinConfig.h"
 
-#if HAS_MEDIA
+#if ENABLED(SDSUPPORT)
 
 #include "../gcode.h"
 #include "../../sd/cardreader.h"
-
-#if ENABLED(DWIN_LCD_PROUI)
-  #include "../../lcd/marlinui.h"
-#endif
 
 /**
  * M524: Abort the current SD print job (started with M24)
  */
 void GcodeSuite::M524() {
 
-  #if ENABLED(DWIN_LCD_PROUI)
-
-    ui.abort_print();
-
-  #else
-
-    if (IS_SD_PRINTING())
-      card.abortFilePrintSoon();
-    else if (card.isMounted())
-      card.closefile();
-
-  #endif
+  if (IS_SD_PRINTING())
+    card.flag.abort_sd_printing = true;
 
 }
 
-#endif // HAS_MEDIA
+#endif // SDSUPPORT

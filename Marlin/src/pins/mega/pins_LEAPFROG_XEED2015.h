@@ -16,21 +16,22 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * Leapfrog Xeed Driver board pin assignments
- * ATmega2560
  *
  * This board is used by other Leapfrog printers in addition to the Xeed,
  * such as the Creatr HS and Bolt. The pin assignments vary wildly between
  * printer models. As such this file is currently specific to the Xeed.
  */
 
-#include "env_validate.h"
+#ifndef __AVR_ATmega2560__
+  #error "Oops! Select 'Mega 2560' in 'Tools > Board.'"
+#endif
 
 #define BOARD_INFO_NAME "Leapfrog Xeed 2015"
 
@@ -85,7 +86,7 @@
 #define E1_ENABLE_PIN                         33
 
 //
-// Filament Runout Sensor
+// Filament runout
 //
 #define FIL_RUNOUT_PIN                        42  // ROT2 Connector
 #define FIL_RUNOUT2_PIN                       44  // ROT1 Connector
@@ -104,7 +105,7 @@
 #define HEATER_1_PIN                           9  // Misc Connector, pins 5 and 6 (Out3)
 #define HEATER_BED_PIN                         6  // Misc Connector, pins 9(-) and 10(+) (OutA)
 
-#define FAN0_PIN                              10  // Misc Connector, pins 7(-) and 8 (+) (Out4)
+#define FAN_PIN                               10  // Misc Connector, pins 7(-) and 8 (+) (Out4)
 
 #define LED_PIN                               13
 

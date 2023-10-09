@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifdef ARDUINO_ARCH_ESP32
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if ALL(WIFISUPPORT, OTASUPPORT)
+#if BOTH(WIFISUPPORT, OTASUPPORT)
 
 #include <WiFi.h>
 #include <ESPmDNS.h>
@@ -50,7 +49,7 @@ void OTA_init() {
     })
     .onError([](ota_error_t error) {
       Serial.printf("Error[%u]: ", error);
-      const char *str = "unknown";
+      char *str;
       switch (error) {
         case OTA_AUTH_ERROR:    str = "Auth Failed";    break;
         case OTA_BEGIN_ERROR:   str = "Begin Failed";   break;

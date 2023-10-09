@@ -16,14 +16,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
-// ATmega2561
-
-#if NOT_TARGET(__AVR_ATmega1281__, __AVR_ATmega2561__)
+#if !defined(__AVR_ATmega1281__) && !defined(__AVR_ATmega2561__)
   #error "Oops! Select 'Silvergate' in 'Tools > Board.'"
 #endif
 
@@ -57,16 +55,13 @@
   #define FIL_RUNOUT_PIN                      34  // X_MAX unless overridden
 #endif
 
-#ifndef FAN0_PIN
-  #define FAN0_PIN                             5
+#ifndef FAN_PIN
+  #define FAN_PIN                              5
 #endif
 
 #define HEATER_0_PIN                           7
 
-#ifndef E0_AUTO_FAN_PIN
-  #define E0_AUTO_FAN_PIN                      3
-#endif
-
+#define ORIG_E0_AUTO_FAN_PIN                   3  // Use this by NOT overriding E0_AUTO_FAN_PIN
 #define CONTROLLER_FAN_PIN                     2
 
 #define TEMP_0_PIN                             7  // Analog Input
@@ -74,10 +69,10 @@
 #define HEATER_BED_PIN                         8
 #define TEMP_BED_PIN                           6
 
-#if HAS_WIRED_LCD
-  #if IS_U8GLIB_ST7920                            // SPI GLCD 12864 ST7920
+#if HAS_GRAPHICAL_LCD
+  #if ENABLED(U8GLIB_ST7920)                      // SPI GLCD 12864 ST7920
     #define LCD_PINS_RS                       30
-    #define LCD_PINS_EN                       20
+    #define LCD_PINS_ENABLE                   20
     #define LCD_PINS_D4                       25
     #define BEEPER_PIN                        29
     #define BTN_EN1                           19
@@ -88,9 +83,6 @@
       #define KILL_PIN                        21
       #define HOME_PIN                        28
     #endif
-    #define BOARD_ST7920_DELAY_1               0
-    #define BOARD_ST7920_DELAY_2             250
-    #define BOARD_ST7920_DELAY_3               0
   #endif
 #endif
 
@@ -98,7 +90,4 @@
 
 #define STAT_LED_RED_PIN                      23
 #define STAT_LED_BLUE_PIN                     26
-
-#ifndef CASE_LIGHT_PIN
-  #define CASE_LIGHT_PIN                      51
-#endif
+#define CASE_LIGHT_PIN                        51

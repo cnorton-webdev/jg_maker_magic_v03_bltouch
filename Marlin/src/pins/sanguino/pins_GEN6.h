@@ -16,15 +16,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * Gen6 pin assignments
- * Schematic: https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Gen6/GEN6_Mendel_Circuit.pdf
- * Origin: https://reprap.org/mediawiki/images/0/0f/GEN6_Mendel_Circuit.pdf
  */
 
  /**
@@ -33,6 +31,7 @@
  * 1) added pointer to a current Arduino IDE extension
  * 2) added support for M3, M4 & M5 spindle control commands
  * 3) added case light pin definition
+ *
  */
 
 /**
@@ -50,10 +49,12 @@
  * Just use the above JSON URL instead of Sparkfun's JSON.
  *
  * Once installed select the Sanguino board and then select the CPU.
+ *
  */
 
-#define ALLOW_MEGA644P
-#include "env_validate.h"
+#if !defined(__AVR_ATmega644P__) && !defined(__AVR_ATmega1284P__)
+  #error "Oops! Select 'Sanguino' in 'Tools > Boards' and 'ATmega644P' or 'ATmega1284P' in 'Tools > Processor.'"
+#endif
 
 #ifndef BOARD_INFO_NAME
   #define BOARD_INFO_NAME "Gen6"
@@ -105,10 +106,7 @@
 //
 #define SDSS                                  17
 #define DEBUG_PIN                              0
-
-#ifndef CASE_LIGHT_PIN
-  #define CASE_LIGHT_PIN                      16  // Hardware PWM
-#endif
+#define CASE_LIGHT_PIN                        16  // Hardware PWM
 
 // RS485 pins
 #define TX_ENABLE_PIN                         12
@@ -117,8 +115,6 @@
 //
 // M3/M4/M5 - Spindle/Laser Control
 //
-#if HAS_CUTTER
-  #define SPINDLE_LASER_PWM_PIN               16  // Hardware PWM
-  #define SPINDLE_LASER_ENA_PIN                5  // Pullup or pulldown!
-  #define SPINDLE_DIR_PIN                      6
-#endif
+#define SPINDLE_LASER_ENA_PIN                  5  // Pullup or pulldown!
+#define SPINDLE_LASER_PWM_PIN                 16  // Hardware PWM
+#define SPINDLE_DIR_PIN                        6

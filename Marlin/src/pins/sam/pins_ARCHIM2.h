@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -37,7 +37,7 @@
  *   https://github.com/ultimachine/Archim/wiki
  */
 
-#if NOT_TARGET(__SAM3X8E__)
+#ifndef __SAM3X8E__
   #error "Oops! Select 'Archim' in 'Tools > Board.'"
 #elif DISABLED(TMC_USE_SW_SPI)
   #error "Archim2 requires Software SPI. Enable TMC_USE_SW_SPI in Configuration_adv.h."
@@ -71,7 +71,7 @@
   #define E0_DIAG_PIN                         78  // PB23
   #define E1_DIAG_PIN                         25  // PD0
 
-  #if X_HOME_TO_MIN
+  #if X_HOME_DIR < 0
     #define X_MIN_PIN                 X_DIAG_PIN
     #define X_MAX_PIN                         32
   #else
@@ -79,7 +79,7 @@
     #define X_MAX_PIN                 X_DIAG_PIN
   #endif
 
-  #if Y_HOME_TO_MIN
+  #if Y_HOME_DIR < 0
     #define Y_MIN_PIN                 Y_DIAG_PIN
     #define Y_MAX_PIN                         15
   #else
@@ -145,17 +145,19 @@
 #endif
 
 //
-// SPI pins for TMC2130 stepper drivers.
+// Software SPI pins for TMC2130 stepper drivers.
 // Required for the Archim2 board.
 //
-#ifndef TMC_SPI_MOSI
-  #define TMC_SPI_MOSI                        28  // PD3
-#endif
-#ifndef TMC_SPI_MISO
-  #define TMC_SPI_MISO                        26  // PD1
-#endif
-#ifndef TMC_SPI_SCK
-  #define TMC_SPI_SCK                         27  // PD2
+#if ENABLED(TMC_USE_SW_SPI)
+  #ifndef TMC_SW_MOSI
+    #define TMC_SW_MOSI                       28  // PD3
+  #endif
+  #ifndef TMC_SW_MISO
+    #define TMC_SW_MISO                       26  // PD1
+  #endif
+  #ifndef TMC_SW_SCK
+    #define TMC_SW_SCK                        27  // PD2
+  #endif
 #endif
 
 //
@@ -174,8 +176,8 @@
 #define HEATER_2_PIN                           8  // D8 PC22 FET_PWM5
 #define HEATER_BED_PIN                         9  // D9 PC21 BED_PWM
 
-#ifndef FAN0_PIN
-  #define FAN0_PIN                             4  // D4 PC26 FET_PWM1
+#ifndef FAN_PIN
+  #define FAN_PIN                              4  // D4 PC26 FET_PWM1
 #endif
 #define FAN1_PIN                               5  // D5 PC25 FET_PWM2
 
@@ -190,9 +192,9 @@
 #define INT_SDSS                              55  // D55 PA24/MCDA3
 
 // External SD card reader on SC2
-#define SD_SCK_PIN                            76  // D76 PA27
-#define SD_MISO_PIN                           74  // D74 PA25
-#define SD_MOSI_PIN                           75  // D75 PA26
+#define SCK_PIN                               76  // D76 PA27
+#define MISO_PIN                              74  // D74 PA25
+#define MOSI_PIN                              75  // D75 PA26
 #define SDSS                                  87  // D87 PA29
 
 // Unused Digital GPIO J20 Pins
@@ -214,9 +216,7 @@
 
 // Case Light
 
-#ifndef CASE_LIGHT_PIN
-  #define CASE_LIGHT_PIN          GPIO_PB1_J20_5
-#endif
+#define CASE_LIGHT_PIN            GPIO_PB1_J20_5
 
 // 2MB SPI Flash
 #define SPI_FLASH_SS                          52  // D52 PB21
@@ -235,26 +235,21 @@
 //
 // LCD / Controller
 //
-#if ANY(HAS_WIRED_LCD, TOUCH_UI_ULTIPANEL, TOUCH_UI_FTDI_EVE)
+#if HAS_SPI_LCD || TOUCH_UI_ULTIPANEL || ENABLED(TOUCH_UI_FTDI_EVE)
   #define BEEPER_PIN                          23  // D24 PA15_CTS1
   #define LCD_PINS_RS                         17  // D17 PA12_RXD1
-  #define LCD_PINS_EN                         24  // D23 PA14_RTS1
+  #define LCD_PINS_ENABLE                     24  // D23 PA14_RTS1
   #define LCD_PINS_D4                         69  // D69 PA0_CANTX0
   #define LCD_PINS_D5                         54  // D54 PA16_SCK1
   #define LCD_PINS_D6                         68  // D68 PA1_CANRX0
   #define LCD_PINS_D7                         34  // D34 PC2_PWML0
-#endif
 
-#if ANY(IS_ULTIPANEL, TOUCH_UI_ULTIPANEL, TOUCH_UI_FTDI_EVE)
-  // Buttons on AUX-2
-  #define BTN_EN1                             60  // D60 PA3_TIOB1
-  #define BTN_EN2                             13  // D13 PB27_TIOB0
-  #define BTN_ENC                             16  // D16 PA13_TXD1 // the click
-#endif
-
-#if ANY(HAS_WIRED_LCD, TOUCH_UI_ULTIPANEL, TOUCH_UI_FTDI_EVE, USB_FLASH_DRIVE_SUPPORT)
   #define SD_DETECT_PIN                        2  // D2  PB25_TIOA0
-  #if ENABLED(USB_FLASH_DRIVE_SUPPORT)
-    #define DISABLE_DUE_SD_MMC
-  #endif
-#endif
+
+  #if ENABLED(ULTIPANEL) || TOUCH_UI_ULTIPANEL || ENABLED(TOUCH_UI_FTDI_EVE)
+    // Buttons on AUX-2
+    #define BTN_EN1                           60  // D60 PA3_TIOB1
+    #define BTN_EN2                           13  // D13 PB27_TIOB0
+    #define BTN_ENC                           16  // D16 PA13_TXD1 // the click
+  #endif // ULTIPANEL || TOUCH_UI_ULTIPANEL
+#endif // HAS_SPI_LCD

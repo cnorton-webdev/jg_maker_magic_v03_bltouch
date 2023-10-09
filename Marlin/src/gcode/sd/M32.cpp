@@ -16,13 +16,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
 #include "../../inc/MarlinConfig.h"
 
-#if HAS_MEDIA_SUBCALLS
+#if ENABLED(SDSUPPORT)
 
 #include "../gcode.h"
 #include "../../sd/cardreader.h"
@@ -38,6 +38,7 @@
  *    M32 !PATH/TO/FILE.GCO#      ; Start FILE.GCO
  *    M32 P !PATH/TO/FILE.GCO#    ; Start FILE.GCO as a procedure
  *    M32 S60 !PATH/TO/FILE.GCO#  ; Start FILE.GCO at byte 60
+ *
  */
 void GcodeSuite::M32() {
   if (IS_SD_PRINTING()) planner.synchronize();
@@ -49,11 +50,11 @@ void GcodeSuite::M32() {
 
     if (parser.seenval('S')) card.setIndex(parser.value_long());
 
-    card.startOrResumeFilePrinting();
+    card.startFileprint();
 
     // Procedure calls count as normal print time.
     if (!call_procedure) startOrResumeJob();
   }
 }
 
-#endif // HAS_MEDIA_SUBCALLS
+#endif // SDSUPPORT

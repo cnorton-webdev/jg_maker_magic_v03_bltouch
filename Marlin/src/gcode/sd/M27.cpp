@@ -16,13 +16,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
 #include "../../inc/MarlinConfig.h"
 
-#if HAS_MEDIA
+#if ENABLED(SDSUPPORT)
 
 #include "../gcode.h"
 #include "../../sd/cardreader.h"
@@ -33,20 +33,18 @@
  *      OR, with 'C' get the current filename.
  */
 void GcodeSuite::M27() {
-  if (parser.seen_test('C')) {
+  if (parser.seen('C')) {
     SERIAL_ECHOPGM("Current file: ");
-    card.printSelectedFilename();
-    return;
+    card.printFilename();
   }
 
   #if ENABLED(AUTO_REPORT_SD_STATUS)
-    if (parser.seenval('S')) {
-      card.auto_reporter.set_interval(parser.value_byte());
-      return;
-    }
+    else if (parser.seenval('S'))
+      card.set_auto_report_interval(parser.value_byte());
   #endif
 
-  card.report_status();
+  else
+    card.report_status();
 }
 
-#endif // HAS_MEDIA
+#endif // SDSUPPORT

@@ -16,24 +16,22 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
-#if NOT_TARGET(STM32F7xx)
+#ifndef STM32F7xx
   #error "Oops! Select an STM32F7 board in 'Tools > Board.'"
 #endif
 
 #define BOARD_INFO_NAME      "RemRam v1"
 #define DEFAULT_MACHINE_NAME "RemRam"
 
-#if NO_EEPROM_SELECTED
-  #define SRAM_EEPROM_EMULATION                   // Emulate the EEPROM using Backup SRAM
-#endif
+#define SRAM_EEPROM_EMULATION                     // Emulate the EEPROM using Backup SRAM
 
-#if HAS_MULTI_HOTEND || E_STEPPERS > 1
-  #error "RemRam only supports 1 hotend / E stepper."
+#if HOTENDS > 1 || E_STEPPERS > 1
+  #error "RemRam supports only one hotend / E-stepper."
 #endif
 
 //
@@ -44,13 +42,14 @@
   #define X_MAX_PIN                           59
   #define Y_MIN_PIN                           60
   #define Y_MAX_PIN                           61
+  #define Z_MIN_PIN                           62
   #define Z_MAX_PIN                           63
 #else
   #define X_STOP_PIN                          36
   #define Y_STOP_PIN                          39
+  #define Z_MIN_PIN                           62
   #define Z_MAX_PIN                           42
 #endif
-#define Z_MIN_PIN                             62
 
 //
 // Z Probe (when not Z_MIN_PIN)
@@ -95,14 +94,12 @@
 #define HEATER_0_PIN                          33
 #define HEATER_BED_PIN                        31
 
-#ifndef FAN0_PIN
-  #define FAN0_PIN                            30  // "FAN1"
+#ifndef FAN_PIN
+  #define FAN_PIN                             30  // "FAN1"
 #endif
 #define FAN1_PIN                              32  // "FAN2"
 
-#ifndef E0_AUTO_FAN_PIN
-  #define E0_AUTO_FAN_PIN                     32
-#endif
+#define ORIG_E0_AUTO_FAN_PIN                  32  // Use this by NOT overriding E0_AUTO_FAN_PIN
 
 //
 // Servos
@@ -120,7 +117,7 @@
 #define SD_DETECT_PIN                         56  // SD_CARD_DET
 #define BEEPER_PIN                            46  // LCD_BEEPER
 #define LCD_PINS_RS                           49  // LCD_RS
-#define LCD_PINS_EN                           48  // LCD_EN
+#define LCD_PINS_ENABLE                       48  // LCD_EN
 #define LCD_PINS_D4                           50  // LCD_D4
 #define LCD_PINS_D5                           51  // LCD_D5
 #define LCD_PINS_D6                           52  // LCD_D6
@@ -133,4 +130,4 @@
 // Timers
 //
 
-#define STEP_TIMER  2
+#define STEP_TIMER                             2

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -30,12 +30,10 @@
 //
 #include <stdint.h>
 
-#ifndef __MARLIN_DEPS__
-  #include "../HAL/platforms.h"
-#endif
+#include "../HAL/platforms.h"
 
-#include "../core/macros.h"
 #include "../core/boards.h"
+#include "../core/macros.h"
 #include "../../Configuration.h"
 
 #ifdef CUSTOM_VERSION_FILE
@@ -47,16 +45,10 @@
 #include "Version.h"
 
 #include "Conditionals_LCD.h"
-
-#ifndef __MARLIN_DEPS__
-  #include HAL_PATH(.., inc/Conditionals_LCD.h)
-#endif
+#include HAL_PATH(../HAL, inc/Conditionals_LCD.h)
 
 #include "../core/drivers.h"
 #include "../../Configuration_adv.h"
 
 #include "Conditionals_adv.h"
-
-#ifndef __MARLIN_DEPS__
-  #include HAL_PATH(.., inc/Conditionals_adv.h)
-#endif
+#include HAL_PATH(../HAL, inc/Conditionals_adv.h)

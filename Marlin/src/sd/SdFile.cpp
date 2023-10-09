@@ -16,13 +16,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
 /**
- * sd/SdFile.cpp
- *
  * Arduino SdFat Library
  * Copyright (c) 2009 by William Greiman
  *
@@ -31,7 +29,7 @@
 
 #include "../inc/MarlinConfig.h"
 
-#if HAS_MEDIA
+#if ENABLED(SDSUPPORT)
 
 #include "SdFile.h"
 
@@ -43,7 +41,7 @@
  * \param[in] oflag Values for \a oflag are constructed by a bitwise-inclusive
  * OR of open flags. see SdBaseFile::open(SdBaseFile*, const char*, uint8_t).
  */
-SdFile::SdFile(const char * const path, const uint8_t oflag) : SdBaseFile(path, oflag) { }
+SdFile::SdFile(const char* path, uint8_t oflag) : SdBaseFile(path, oflag) { }
 
 /**
  * Write data to an open file.
@@ -59,22 +57,27 @@ SdFile::SdFile(const char * const path, const uint8_t oflag) : SdBaseFile(path, 
  * \a nbyte.  If an error occurs, write() returns -1.  Possible errors
  * include write() is called before a file has been opened, write is called
  * for a read-only file, device is full, a corrupt file system or an I/O error.
+ *
  */
-int16_t SdFile::write(const void * const buf, const uint16_t nbyte) { return SdBaseFile::write(buf, nbyte); }
+int16_t SdFile::write(const void* buf, uint16_t nbyte) { return SdBaseFile::write(buf, nbyte); }
 
 /**
  * Write a byte to a file. Required by the Arduino Print class.
  * \param[in] b the byte to be written.
  * Use writeError to check for errors.
  */
-size_t SdFile::write(const uint8_t b) { return SdBaseFile::write(&b, 1); }
+#if ARDUINO >= 100
+  size_t SdFile::write(uint8_t b) { return SdBaseFile::write(&b, 1); }
+#else
+  void SdFile::write(uint8_t b) { SdBaseFile::write(&b, 1); }
+#endif
 
 /**
  * Write a string to a file. Used by the Arduino Print class.
  * \param[in] str Pointer to the string.
  * Use writeError to check for errors.
  */
-void SdFile::write(const char * const str) { SdBaseFile::write(str, strlen(str)); }
+void SdFile::write(const char* str) { SdBaseFile::write(str, strlen(str)); }
 
 /**
  * Write a PROGMEM string to a file.
@@ -90,9 +93,9 @@ void SdFile::write_P(PGM_P str) {
  * \param[in] str Pointer to the PROGMEM string.
  * Use writeError to check for errors.
  */
-void SdFile::writeln_P(PGM_P const str) {
+void SdFile::writeln_P(PGM_P str) {
   write_P(str);
   write_P(PSTR("\r\n"));
 }
 
-#endif // HAS_MEDIA
+#endif // SDSUPPORT

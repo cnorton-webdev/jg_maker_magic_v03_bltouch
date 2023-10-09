@@ -16,19 +16,19 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 #include "../../../inc/MarlinConfigPre.h"
-#include "../../dogm/marlinui_DOGM.h"
+#include "../../dogm/ultralcd_DOGM.h"
 #include "../../lcdprint.h"
-#include "../../marlinui.h"
+#include "../../ultralcd.h"
 
 //#define MUTE_GAMES
 
-#if ENABLED(MUTE_GAMES) || !HAS_SOUND
+#if ENABLED(MUTE_GAMES) || !HAS_BUZZER
   #define _BUZZ(D,F) NOOP
 #else
   #define _BUZZ(D,F) BUZZ(D,F)

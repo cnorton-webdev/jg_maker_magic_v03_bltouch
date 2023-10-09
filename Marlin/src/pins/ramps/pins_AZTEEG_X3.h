@@ -16,23 +16,19 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * AZTEEG_X3 Arduino Mega with RAMPS v1.4 pin assignments
- * Schematic: https://green-candy.osdn.jp/external/MarlinFW/board_schematics/AZTEEG_X3/AZTEEG%20X3%20PUB%20v1.12.pdf
- * Origin: http://files.panucatt.com/datasheets/azteegx3_designfiles.zip
- * ATmega2560
  */
 
-#define REQUIRE_MEGA2560
-#include "env_validate.h"
-
-#if HOTENDS > 2 || E_STEPPERS > 2
-  #error "Azteeg X3 supports up to 2 hotends / E steppers."
+#ifndef __AVR_ATmega2560__
+  #error "Oops! Select 'Arduino/Genuino Mega or Mega 2560' in 'Tools > Board.'"
+#elif HOTENDS > 2 || E_STEPPERS > 2
+  #error "Azteeg X3 supports up to 2 hotends / E-steppers. Comment out this line to continue."
 #endif
 
 #if ENABLED(CASE_LIGHT_ENABLE) && !PIN_EXISTS(CASE_LIGHT)
@@ -46,7 +42,7 @@
 #define SERVO0_PIN                            44  // SERVO1 port
 #define SERVO1_PIN                            55  // SERVO2 port
 
-#include "pins_RAMPS_13.h" // ... RAMPS
+#include "pins_RAMPS_13.h"
 
 //
 // LCD / Controller
@@ -76,7 +72,7 @@
 //
 // Misc
 //
-#if ENABLED(CASE_LIGHT_ENABLE) && PINS_EXIST(CASE_LIGHT, STAT_LED_RED) && STAT_LED_RED_PIN == CASE_LIGHT_PIN
+#if ENABLED(CASE_LIGHT_ENABLE) && PIN_EXISTS(CASE_LIGHT, STAT_LED_RED) && STAT_LED_RED_PIN == CASE_LIGHT_PIN
   #undef STAT_LED_RED_PIN
 #endif
 

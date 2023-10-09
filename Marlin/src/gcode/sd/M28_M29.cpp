@@ -16,18 +16,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
 #include "../../inc/MarlinConfig.h"
 
-#if HAS_MEDIA
+#if ENABLED(SDSUPPORT)
 
 #include "../gcode.h"
 #include "../../sd/cardreader.h"
 
-#if HAS_MULTI_SERIAL
+#if NUM_SERIAL > 1
   #include "../queue.h"
 #endif
 
@@ -49,7 +49,9 @@ void GcodeSuite::M28() {
     // Binary transfer mode
     if ((card.flag.binary_mode = binary_mode)) {
       SERIAL_ECHO_MSG("Switching to Binary Protocol");
-      TERN_(HAS_MULTI_SERIAL, card.transfer_port_index = queue.ring_buffer.command_port().index);
+      #if NUM_SERIAL > 1
+        card.transfer_port_index = queue.port[queue.index_r];
+      #endif
     }
     else
       card.openFileWrite(p);
@@ -69,4 +71,4 @@ void GcodeSuite::M29() {
   card.flag.saving = false;
 }
 
-#endif // HAS_MEDIA
+#endif // SDSUPPORT

@@ -16,20 +16,26 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
- * Azteeg X5 MINI WIFI pin assignments
- * Wiring diagram: https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Azteeg%20X5%20MINI%20WIFI/x5mini_wifi_wiring.pdf
- * Origin: http://files.panucatt.com/datasheets/x5mini_wifi_wiring.pdf
+ * Azteeg X5 MINI pin assignments
  */
 
-#include "env_validate.h"
+#ifndef MCU_LPC1769
+  #error "Oops! Make sure you have the LPC1769 environment selected in your IDE."
+#endif
 
 #define BOARD_INFO_NAME "Azteeg X5 MINI WIFI"
+
+//
+// EEPROM
+//
+#define FLASH_EEPROM_EMULATION
+//#define SDCARD_EEPROM_EMULATION
 
 //
 // DIGIPOT slave addresses

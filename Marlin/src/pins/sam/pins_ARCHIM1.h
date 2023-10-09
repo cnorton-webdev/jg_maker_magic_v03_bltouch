@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -37,7 +37,7 @@
  *   https://github.com/ultimachine/Archim/wiki
  */
 
-#if NOT_TARGET(__SAM3X8E__)
+#ifndef __SAM3X8E__
   #error "Oops! Select 'Archim' in 'Tools > Board.'"
 #endif
 
@@ -46,7 +46,7 @@
 //
 // Timers
 //
-#define MF_TIMER_STEP  3
+#define STEP_TIMER_NUM                         3
 #define HAL_STEP_TIMER_ISR()  void TC3_Handler()
 
 //
@@ -153,8 +153,8 @@
 #define HEATER_2_PIN                           8  // D8 PC22 FET_PWM5
 #define HEATER_BED_PIN                         9  // D9 PC21 BED_PWM
 
-#ifndef FAN0_PIN
-  #define FAN0_PIN                             4  // D4 PC26 FET_PWM1
+#ifndef FAN_PIN
+  #define FAN_PIN                              4  // D4 PC26 FET_PWM1
 #endif
 #define FAN1_PIN                               5  // D5 PC25 FET_PWM2
 
@@ -169,9 +169,9 @@
 #define INT_SDSS                              55  // D55 PA24/MCDA3
 
 // External SD card reader on SC2
-#define SD_SCK_PIN                            76  // D76 PA27
-#define SD_MISO_PIN                           74  // D74 PA25
-#define SD_MOSI_PIN                           75  // D75 PA26
+#define SCK_PIN                               76  // D76 PA27
+#define MISO_PIN                              74  // D74 PA25
+#define MOSI_PIN                              75  // D75 PA26
 #define SDSS                                  87  // D87 PA29
 
 // 2MB SPI Flash
@@ -180,10 +180,10 @@
 //
 // LCD / Controller
 //
-#if HAS_WIRED_LCD
+#if HAS_SPI_LCD
   #define BEEPER_PIN                          23  // D24 PA15_CTS1
   #define LCD_PINS_RS                         17  // D17 PA12_RXD1
-  #define LCD_PINS_EN                         24  // D23 PA14_RTS1
+  #define LCD_PINS_ENABLE                     24  // D23 PA14_RTS1
   #define LCD_PINS_D4                         69  // D69 PA0_CANTX0
   #define LCD_PINS_D5                         54  // D54 PA16_SCK1
   #define LCD_PINS_D6                         68  // D68 PA1_CANRX0
@@ -191,15 +191,10 @@
 
   #define SD_DETECT_PIN                        2  // D2  PB25_TIOA0
 
-  #if IS_NEWPANEL
+  #if ENABLED(NEWPANEL)
     // Buttons on AUX-2
     #define BTN_EN1                           60  // D60 PA3_TIOB1
     #define BTN_EN2                           13  // D13 PB27_TIOB0
     #define BTN_ENC                           16  // D16 PA13_TXD1
-  #endif // IS_NEWPANEL
-
-  #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
-    #define BTN_ENC_EN               LCD_PINS_D7  // Detect the presence of the encoder
-  #endif
-
-#endif // HAS_WIRED_LCD
+  #endif // NEWPANEL
+#endif // HAS_SPI_LCD

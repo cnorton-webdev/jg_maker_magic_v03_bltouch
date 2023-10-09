@@ -16,19 +16,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * MegaTronics pin assignments
- * Schematic: https://green-candy.osdn.jp/external/MarlinFW/board_schematics/MegaTronics/Megatronics_1_0_sch.pdf
- * Origin: https://reprap.org/mediawiki/images/a/a3/Megatronics_1_0_sch.pdf
- * ATmega2560
  */
 
-#include "env_validate.h"
+#ifndef __AVR_ATmega2560__
+  #error "Oops! Select 'Arduino/Genuino Mega or Mega 2560' in 'Tools > Board.'"
+#endif
 
 #define BOARD_INFO_NAME "Megatronics"
 //
@@ -89,8 +88,8 @@
 #define HEATER_1_PIN                           8
 #define HEATER_BED_PIN                        10
 
-#ifndef FAN0_PIN
-  #define FAN0_PIN                             7  // IO pin. Buffer needed
+#ifndef FAN_PIN
+  #define FAN_PIN                              7  // IO pin. Buffer needed
 #endif
 
 //
@@ -99,20 +98,17 @@
 #define SDSS                                  53
 #define LED_PIN                               13
 #define PS_ON_PIN                             12
-
-#ifndef CASE_LIGHT_PIN
-  #define CASE_LIGHT_PIN                       2
-#endif
+#define CASE_LIGHT_PIN                         2
 
 //
 // LCD / Controller
 //
 #define BEEPER_PIN                            33
 
-#if HAS_WIRED_LCD && IS_NEWPANEL
+#if BOTH(ULTRA_LCD, NEWPANEL)
 
   #define LCD_PINS_RS                         16
-  #define LCD_PINS_EN                         17
+  #define LCD_PINS_ENABLE                     17
   #define LCD_PINS_D4                         23
   #define LCD_PINS_D5                         25
   #define LCD_PINS_D6                         27
@@ -125,13 +121,11 @@
 
   #define SD_DETECT_PIN                       -1  // RAMPS doesn't use this
 
-#endif // HAS_WIRED_LCD && IS_NEWPANEL
+#endif // HAS_SPI_LCD && NEWPANEL
 
 //
 // M3/M4/M5 - Spindle/Laser Control
 //
-#if HAS_CUTTER
-  #define SPINDLE_LASER_PWM_PIN                3  // Hardware PWM
-  #define SPINDLE_LASER_ENA_PIN                4  // Pullup!
-  #define SPINDLE_DIR_PIN                     11
-#endif
+#define SPINDLE_LASER_PWM_PIN                  3  // Hardware PWM
+#define SPINDLE_LASER_ENA_PIN                  4  // Pullup!
+#define SPINDLE_DIR_PIN                       11

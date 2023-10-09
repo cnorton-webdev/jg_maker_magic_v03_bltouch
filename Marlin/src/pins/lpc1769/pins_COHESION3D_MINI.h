@@ -16,20 +16,26 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * Cohesion3D Mini pin assignments
- * Pinout: https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Cohesion3D%20Mini/c3d-pinout.jpg
- * Origin: https://lasergods.com/cohesion3d-mini-pinout-diagram/
  */
 
-#include "env_validate.h"
+#ifndef MCU_LPC1769
+  #error "Oops! Make sure you have the LPC1769 environment selected in your IDE."
+#endif
 
 #define BOARD_INFO_NAME "Cohesion3D Mini"
+
+//
+// EEPROM
+//
+#define FLASH_EEPROM_EMULATION
+//#define SDCARD_EEPROM_EMULATION
 
 //
 // Servos
@@ -72,14 +78,16 @@
 //
 // Default pins for TMC software SPI
 //
-#ifndef TMC_SPI_MOSI
-  #define TMC_SPI_MOSI                     P1_16  // Ethernet Expansion - Pin 5
-#endif
-#ifndef TMC_SPI_MISO
-  #define TMC_SPI_MISO                     P1_17  // Ethernet Expansion - Pin 6
-#endif
-#ifndef TMC_SPI_SCK
-  #define TMC_SPI_SCK                      P1_08  // Ethernet Expansion - Pin 7
+#if ENABLED(TMC_USE_SW_SPI)
+  #ifndef TMC_SW_MOSI
+    #define TMC_SW_MOSI                    P1_16  // Ethernet Expansion - Pin 5
+  #endif
+  #ifndef TMC_SW_MISO
+    #define TMC_SW_MISO                    P1_17  // Ethernet Expansion - Pin 6
+  #endif
+  #ifndef TMC_SW_SCK
+    #define TMC_SW_SCK                     P1_08  // Ethernet Expansion - Pin 7
+  #endif
 #endif
 
 //
@@ -94,23 +102,18 @@
 //
 #define HEATER_BED_PIN                     P2_05
 #define HEATER_0_PIN                       P2_07  // FET 1
-#ifndef FAN0_PIN
-  #define FAN0_PIN                         P2_06  // FET 3
+#ifndef FAN_PIN
+  #define FAN_PIN                          P2_06  // FET 3
 #endif
 
 //
 // Auto fans
 //
 #define AUTO_FAN_PIN                       P2_04  // FET 4
-#ifndef E0_AUTO_FAN_PIN
-  #define E0_AUTO_FAN_PIN           AUTO_FAN_PIN
-#endif
-#ifndef E1_AUTO_FAN_PIN
-  #define E1_AUTO_FAN_PIN           AUTO_FAN_PIN
-#endif
-#ifndef E2_AUTO_FAN_PIN
-  #define E2_AUTO_FAN_PIN           AUTO_FAN_PIN
-#endif
+
+#define ORIG_E0_AUTO_FAN_PIN        AUTO_FAN_PIN
+#define ORIG_E1_AUTO_FAN_PIN        AUTO_FAN_PIN
+#define ORIG_E2_AUTO_FAN_PIN        AUTO_FAN_PIN
 
 //
 // Misc. Functions
@@ -125,7 +128,7 @@
   #define SPINDLE_LASER_ENA_PIN            P2_07  // FET 1
   #undef HEATER_BED_PIN
   #define SPINDLE_LASER_PWM_PIN            P2_05  // Bed FET
-  #undef FAN0_PIN
+  #undef FAN_PIN
   #define SPINDLE_DIR_PIN                  P2_06  // FET 3
 #endif
 
@@ -139,7 +142,7 @@
 // connector are shared with the onboard SD card, and Marlin does not support reading
 // G-code files from the onboard SD card.
 //
-#if HAS_WIRED_LCD
+#if HAS_SPI_LCD
 
   #define BEEPER_PIN                       P0_27  // EXP2-7 - open drain
 
@@ -149,16 +152,16 @@
 
   #define LCD_PINS_RS                      P0_16  // EXP1-4
   #define LCD_SDSS                         P0_28  // EXP2-4
-  #define LCD_PINS_EN                      P0_18  // EXP1-3
+  #define LCD_PINS_ENABLE                  P0_18  // EXP1-3
   #define LCD_PINS_D4                      P0_15  // EXP1-5
 
   #define KILL_PIN                         P2_11  // EXP2-10
 
-  #if HAS_MEDIA
+  #if ENABLED(SDSUPPORT)
     #error "SDSUPPORT is not currently supported by the Cohesion3D boards"
   #endif
 
-#endif // HAS_WIRED_LCD
+#endif // HAS_SPI_LCD
 
 //
 // Ethernet pins

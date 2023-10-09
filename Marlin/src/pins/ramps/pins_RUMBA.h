@@ -16,23 +16,19 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * RUMBA pin assignments
- * Schematic: https://green-candy.osdn.jp/external/MarlinFW/board_schematics/RAMPS/RUMBA/RRD-RUMBA_SCHEMATICS.png
- * Origin: https://reprap.org/wiki/File:RRD-RUMBA_SCHEMATICS.png
- * ATmega2560
  */
 
-#define REQUIRE_MEGA2560
-#include "env_validate.h"
-
-#if HOTENDS > 3 || E_STEPPERS > 3
-  #error "RUMBA supports up to 3 hotends / E steppers."
+#ifndef __AVR_ATmega2560__
+  #error "Oops! Select 'Arduino/Genuino Mega or Mega 2560' in 'Tools > Board.'"
+#elif HOTENDS > 3 || E_STEPPERS > 3
+  #error "RUMBA supports up to 3 hotends / E-steppers. Comment out this line to continue."
 #endif
 
 #ifndef BOARD_INFO_NAME
@@ -50,24 +46,12 @@
 //
 // Limit Switches
 //
-#ifndef X_MIN_PIN
-  #define X_MIN_PIN                           37
-#endif
-#ifndef X_MAX_PIN
-  #define X_MAX_PIN                           36
-#endif
-#ifndef Y_MIN_PIN
-  #define Y_MIN_PIN                           35
-#endif
-#ifndef Y_MAX_PIN
-  #define Y_MAX_PIN                           34
-#endif
-#ifndef Z_MIN_PIN
-  #define Z_MIN_PIN                           33
-#endif
-#ifndef Z_MAX_PIN
-  #define Z_MAX_PIN                           32
-#endif
+#define X_MIN_PIN                             37
+#define X_MAX_PIN                             36
+#define Y_MIN_PIN                             35
+#define Y_MAX_PIN                             34
+#define Z_MIN_PIN                             33
+#define Z_MAX_PIN                             32
 
 //
 // Z Probe (when not Z_MIN_PIN)
@@ -156,8 +140,8 @@
 #define HEATER_3_PIN                           8
 #define HEATER_BED_PIN                         9
 
-#ifndef FAN0_PIN
-  #define FAN0_PIN                             7
+#ifndef FAN_PIN
+  #define FAN_PIN                              7
 #endif
 #ifndef FAN1_PIN
   #define FAN1_PIN                             8
@@ -169,10 +153,7 @@
 #define LED_PIN                               13
 #define PS_ON_PIN                             45
 #define KILL_PIN                              46
-
-#ifndef CASE_LIGHT_PIN
-  #define CASE_LIGHT_PIN                      45
-#endif
+#define CASE_LIGHT_PIN                        45
 
 //
 // M3/M4/M5 - Spindle/Laser Control
@@ -190,7 +171,7 @@
 //
 // LCD / Controller
 //
-#if ANY(MKS_12864OLED, MKS_12864OLED_SSD1306)
+#if EITHER(MKS_12864OLED, MKS_12864OLED_SSD1306)
   #define LCD_PINS_DC                         38  // Set as output on init
   #define LCD_PINS_RS                         41  // Pull low for 1s to init
   // DOGM SPI LCD Support
@@ -209,7 +190,7 @@
 
   #define LCD_RESET_PIN                       18  // Must be high or open for LCD to operate normally.
 
-  #if ANY(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
+  #if EITHER(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
     #ifndef RGB_LED_R_PIN
       #define RGB_LED_R_PIN                   41
     #endif
@@ -220,12 +201,12 @@
       #define RGB_LED_B_PIN                   40
     #endif
   #elif ENABLED(FYSETC_MINI_12864_2_1)
-    #define NEOPIXEL_PIN                      38
+    #define NEOPIXEL_PIN                      25
   #endif
 
 #else
   #define LCD_PINS_RS                         19
-  #define LCD_PINS_EN                         42
+  #define LCD_PINS_ENABLE                     42
   #define LCD_PINS_D4                         18
   #define LCD_PINS_D5                         38
   #define LCD_PINS_D6                         41
@@ -238,12 +219,12 @@
 //
 #define BEEPER_PIN                            44
 
-#if HAS_MEDIA
+#if ENABLED(SDSUPPORT)
   #define SDSS                                53
   #define SD_DETECT_PIN                       49
 #endif
 
-#if IS_NEWPANEL
+#if ENABLED(NEWPANEL)
   #define BTN_EN1                             11
   #define BTN_EN2                             12
   #define BTN_ENC                             43

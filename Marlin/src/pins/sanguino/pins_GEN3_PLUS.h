@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -29,6 +29,7 @@
  * Rev B    26 DEC 2016
  *
  * added pointer to a current Arduino IDE extension
+ *
  */
 
 /**
@@ -46,10 +47,12 @@
  * Just use the above JSON URL instead of Sparkfun's JSON.
  *
  * Once installed select the SANGUINO board and then select the CPU.
+ *
  */
 
-#define ALLOW_MEGA644P
-#include "env_validate.h"
+#if !defined(__AVR_ATmega644P__) && !defined(__AVR_ATmega1284P__)
+  #error "Oops! Select 'Sanguino' in 'Tools > Boards' and 'ATmega644P' or 'ATmega1284P' in 'Tools > Processor.'"
+#endif
 
 #define BOARD_INFO_NAME "Gen3+"
 

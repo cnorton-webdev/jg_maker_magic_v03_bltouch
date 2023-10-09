@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -31,7 +31,7 @@
  *  There are two Arduino IDE extensions that are compatible with this board
  *  and with the mainstream Marlin software.
  *
- *  Teensyduino - https://www.pjrc.com/teensy/teensyduino.html
+ *  Teensyduino - http://www.pjrc.com/teensy/teensyduino.html
  *    Select Teensy++ 2.0 in Arduino IDE from the 'Tools > Board' menu
  *
  *    Installation instructions are at the above URL.  Don't bother loading the
@@ -65,8 +65,8 @@
 /**
  * Teensy++ 2.0 Breadboard pin assignments (AT90USB1286)
  * Requires the Teensyduino software with Teensy++ 2.0 selected in Arduino IDE!
- * https://www.pjrc.com/teensy/teensyduino.html
- * See https://reprap.org/wiki/Printrboard for more info
+ * http://www.pjrc.com/teensy/teensyduino.html
+ * See http://reprap.org/wiki/Printrboard for more info
  *
  * CLI build: HARDWARE_MOTHERBOARD=84 make
  *
@@ -107,9 +107,10 @@
  *       E DIR   35 a7  a3 31 Y DIR
  */
 
-#include "env_validate.h"
+#ifndef __AVR_AT90USB1286__
+  #error "Oops! Select 'Teensy++ 2.0' or 'Printrboard' in 'Tools > Board.'"
+#endif
 
-// https://reprap.org/wiki/Teensy_Breadboard
 #define BOARD_INFO_NAME "Teensy++2.0"
 
 //
@@ -149,8 +150,8 @@
 //
 #define HEATER_0_PIN                          15  // C5 PWM3B  Extruder
 #define HEATER_BED_PIN                        14  // C4 PWM3C
-#ifndef FAN0_PIN
-  #define FAN0_PIN                            16  // C6 PWM3A  Fan
+#ifndef FAN_PIN
+  #define FAN_PIN                             16  // C6 PWM3A  Fan
 #endif
 
 //
@@ -159,17 +160,14 @@
 #define SDSS                                  20  // B0
 #define LED_PIN                                6  // D6
 #define PS_ON_PIN                             27  // B7
-
-#ifndef CASE_LIGHT_PIN
-  #define CASE_LIGHT_PIN                       1  // D1 PWM2B  MUST BE HARDWARE PWM
-#endif
+#define CASE_LIGHT_PIN                         1  // D1 PWM2B  MUST BE HARDWARE PWM
 
 //
 // LCD / Controller
 //
-#if IS_ULTIPANEL
+#if ENABLED(ULTIPANEL)
   #define LCD_PINS_RS                          8  // E0
-  #define LCD_PINS_EN                          9  // E1
+  #define LCD_PINS_ENABLE                      9  // E1
   #define LCD_PINS_D4                         10  // C0
   #define LCD_PINS_D5                         11  // C1
   #define LCD_PINS_D6                         12  // C2
@@ -182,8 +180,6 @@
 //
 // M3/M4/M5 - Spindle/Laser Control
 //
-#if HAS_CUTTER
-  #define SPINDLE_LASER_PWM_PIN                0  // D0 PWM0B   MUST BE HARDWARE PWM
-  #define SPINDLE_LASER_ENA_PIN                5  // D5  Pin should have a pullup!
-  #define SPINDLE_DIR_PIN                      7  // D7
-#endif
+#define SPINDLE_LASER_ENA_PIN                  5  // D5  Pin should have a pullup!
+#define SPINDLE_LASER_PWM_PIN                  0  // D0 PWM0B   MUST BE HARDWARE PWM
+#define SPINDLE_DIR_PIN                        7  // D7

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -57,12 +57,11 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if IS_U8GLIB_ST7920
+#if ENABLED(U8GLIB_ST7920)
 
-#include "../../../inc/MarlinConfig.h"
 #include "../../shared/Delay.h"
 
-#include <U8glib-HAL.h>
+#include <U8glib.h>
 
 #include "u8g_com_HAL_DUE_sw_spi_shared.h"
 
@@ -146,7 +145,7 @@ uint8_t u8g_com_HAL_DUE_ST7920_sw_spi_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_va
 }
 
 #if ENABLED(LIGHTWEIGHT_UI)
-  #include "../../../lcd/marlinui.h"
+  #include "../../../lcd/ultralcd.h"
   #include "../../shared/HAL_ST7920.h"
 
   #define ST7920_CS_PIN LCD_PINS_RS
@@ -182,5 +181,5 @@ uint8_t u8g_com_HAL_DUE_ST7920_sw_spi_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_va
   }
 #endif // LIGHTWEIGHT_UI
 
-#endif // IS_U8GLIB_ST7920
+#endif // U8GLIB_ST7920
 #endif // ARDUINO_ARCH_SAM

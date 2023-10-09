@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
@@ -27,38 +27,20 @@
 
 #include "MarlinConfigPre.h"
 
-#ifdef __MARLIN_DEPS__
-  #include "../HAL/shared/fauxpins.h"
-#else
-  #include "../HAL/HAL.h"
-#endif
+#include "../HAL/HAL.h"
 
 #include "../pins/pins.h"
-
-#ifndef __MARLIN_DEPS__
-  #include HAL_PATH(.., timers.h)
-  #include HAL_PATH(.., spi_pins.h)
-#endif
+#include HAL_PATH(../HAL, spi_pins.h)
 
 #include "Conditionals_post.h"
+#include HAL_PATH(../HAL, inc/Conditionals_post.h)
 
-#ifndef __MARLIN_DEPS__
+#include "../core/types.h"  // Ahead of sanity-checks
 
-  #include HAL_PATH(.., inc/Conditionals_post.h)
+#include "SanityCheck.h"
+#include HAL_PATH(../HAL, inc/SanityCheck.h)
 
-  #include "../core/types.h"  // Ahead of sanity-checks
-
-  #include "Changes.h"
-  #include "SanityCheck.h"
-  #include HAL_PATH(.., inc/SanityCheck.h)
-
-  // Include all core headers
-  #include "../core/language.h"
-  #include "../core/utility.h"
-  #include "../core/mstring.h"
-  #include "../core/serial.h"
-  #include "../core/endianness.h"
-
-#endif
-
-#include "../core/multi_language.h"
+// Include all core headers
+#include "../core/language.h"
+#include "../core/utility.h"
+#include "../core/serial.h"

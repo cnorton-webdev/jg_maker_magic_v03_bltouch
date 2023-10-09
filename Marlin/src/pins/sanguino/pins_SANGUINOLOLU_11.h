@@ -16,23 +16,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * Sanguinololu board pin assignments
- * Schematic (0.1): https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Sanguinololu%20v0.1/schematic.png
- * Origin (0.1): https://github.com/mosfet/Sanguinololu/blob/master/rev0.1/sanguinololu.sch
- * Schematic (0.6): https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Sanguinololu%20v0.6/schematic.jpg
- * Origin (0.6): https://github.com/mosfet/Sanguinololu/blob/master/rev0.6/images/schematic.jpg
- * Schematic (0.7): https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Sanguinololu%20v0.7/schematic.jpg
- * Origin (0.7): https://github.com/mosfet/Sanguinololu/blob/master/rev0.7/images/schematic.jpg
- * Schematic (1.0): https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Sanguinololu%20v1.0/Sanguinololu-schematic.jpg
- * Origin (1.0): https://reprap.org/wiki/File:Sanguinololu-schematic.jpg
- * Schematic (1.1): https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Sanguinololu%20v1.1/schematic.png
- * Origin (1.1): https://github.com/mosfet/Sanguinololu/blob/master/rev1.1/sanguinololu.sch
  */
 
 /**
@@ -41,6 +31,7 @@
  * 1) added pointer to a current Arduino IDE extension
  * 2) added support for M3, M4 & M5 spindle control commands
  * 3) added case light pin definition
+ *
  */
 
 /**
@@ -58,10 +49,12 @@
  * Just use the above JSON URL instead of Sparkfun's JSON.
  *
  * Once installed select the Sanguino board and then select the CPU.
+ *
  */
 
-#define ALLOW_MEGA644P
-#include "env_validate.h"
+#if !defined(__AVR_ATmega644P__) && !defined(__AVR_ATmega1284P__)
+  #error "Oops! Select 'Sanguino' in 'Tools > Boards' and 'ATmega644P' or 'ATmega1284P' in 'Tools > Processor.'"
+#endif
 
 #ifndef BOARD_INFO_NAME
   #define BOARD_INFO_NAME "Sanguinololu <1.2"
@@ -100,18 +93,30 @@
 //
 #define HEATER_0_PIN                          13  // (extruder)
 
-#ifndef FAN0_PIN
-  #define FAN0_PIN                             4  // Works for Panelolu2 too
+#if ENABLED(SANGUINOLOLU_V_1_2)
+
+  #define HEATER_BED_PIN                      12  // (bed)
+  #define X_ENABLE_PIN                        14
+  #define Y_ENABLE_PIN                        14
+  #define Z_ENABLE_PIN                        26
+  #define E0_ENABLE_PIN                       14
+
+  #if !defined(FAN_PIN) && ENABLED(LCD_I2C_PANELOLU2)
+    #define FAN_PIN                            4  // Uses Transistor1 (PWM) on Panelolu2's Sanguino Adapter Board to drive the fan
+  #endif
+
+#else
+
+  #define HEATER_BED_PIN                      14  // (bed)
+  #define X_ENABLE_PIN                        -1
+  #define Y_ENABLE_PIN                        -1
+  #define Z_ENABLE_PIN                        -1
+  #define E0_ENABLE_PIN                       -1
+
 #endif
 
-#if DISABLED(SANGUINOLOLU_V_1_2)
-  #define HEATER_BED_PIN                      14  // (bed)
-  #define X_ENABLE_PIN                         4
-  #define Y_ENABLE_PIN                         4
-  #ifndef Z_ENABLE_PIN
-    #define Z_ENABLE_PIN                       4
-  #endif
-  #define E0_ENABLE_PIN                        4
+#if !defined(FAN_PIN) && (MB(AZTEEG_X1, STB_11) || IS_MELZI)
+  #define FAN_PIN                              4  // Works for Panelolu2 too
 #endif
 
 //
@@ -133,7 +138,7 @@
   #define LCD_BACKLIGHT_PIN                   17  // LCD backlight LED
 #endif
 
-#if !HAS_CUTTER && ENABLED(SANGUINOLOLU_V_1_2) && !ALL(HAS_WIRED_LCD, IS_NEWPANEL) // try to use IO Header
+#if NONE(SPINDLE_FEATURE, LASER_FEATURE) && ENABLED(SANGUINOLOLU_V_1_2) && !BOTH(ULTRA_LCD, NEWPANEL)// try to use IO Header
   #define CASE_LIGHT_PIN                       4  // Hardware PWM  - see if IO Header is available
 #endif
 
@@ -149,25 +154,27 @@
 //
 // LCD / Controller
 //
-#if HAS_WIRED_LCD && DISABLED(LCD_PINS_DEFINED)
+#if HAS_SPI_LCD
 
   #define SD_DETECT_PIN                       -1
 
-  #if HAS_MARLINUI_U8GLIB
+  #if HAS_GRAPHICAL_LCD
 
     #if ENABLED(LCD_FOR_MELZI)
 
       #define LCD_PINS_RS                     17
-      #define LCD_PINS_EN                     16
+      #define LCD_PINS_ENABLE                 16
       #define LCD_PINS_D4                     11
-      #define KILL_PIN                        10
-      #define BEEPER_PIN                      27
 
-    #elif IS_U8GLIB_ST7920                        // SPI GLCD 12864 ST7920 ( like [www.digole.com] ) For Melzi V2.0
+      #define BOARD_ST7920_DELAY_1 DELAY_NS(0)
+      #define BOARD_ST7920_DELAY_2 DELAY_NS(188)
+      #define BOARD_ST7920_DELAY_3 DELAY_NS(0)
+
+    #elif ENABLED(U8GLIB_ST7920)                  // SPI GLCD 12864 ST7920 ( like [www.digole.com] ) For Melzi V2.0
 
       #if IS_MELZI
         #define LCD_PINS_RS                   30  // CS chip select /SS chip slave select
-        #define LCD_PINS_EN                   29  // SID (MOSI)
+        #define LCD_PINS_ENABLE               29  // SID (MOSI)
         #define LCD_PINS_D4                   17  // SCK (CLK) clock
         // Pin 27 is taken by LED_PIN, but Melzi LED does nothing with
         // Marlin so this can be used for BEEPER_PIN. You can use this pin
@@ -175,7 +182,7 @@
         #define BEEPER_PIN                    27
       #else                                       // Sanguinololu >=1.3
         #define LCD_PINS_RS                    4
-        #define LCD_PINS_EN                   17
+        #define LCD_PINS_ENABLE               17
         #define LCD_PINS_D4                   30
         #define LCD_PINS_D5                   29
         #define LCD_PINS_D6                   28
@@ -205,12 +212,16 @@
 
     #endif
 
-    //#define LCD_SCREEN_ROTATE              180  // 0, 90, 180, 270
+    // Uncomment screen orientation
+    //#define LCD_SCREEN_ROT_0
+    //#define LCD_SCREEN_ROT_90
+    //#define LCD_SCREEN_ROT_180
+    //#define LCD_SCREEN_ROT_270
 
   #elif ENABLED(ZONESTAR_LCD)                     // For the Tronxy Melzi boards
 
     #define LCD_PINS_RS                       28
-    #define LCD_PINS_EN                       29
+    #define LCD_PINS_ENABLE                   29
     #define LCD_PINS_D4                       10
     #define LCD_PINS_D5                       11
     #define LCD_PINS_D6                       16
@@ -219,7 +230,7 @@
   #else
 
     #define LCD_PINS_RS                        4
-    #define LCD_PINS_EN                       17
+    #define LCD_PINS_ENABLE                   17
     #define LCD_PINS_D4                       30
     #define LCD_PINS_D5                       29
     #define LCD_PINS_D6                       28
@@ -243,9 +254,7 @@
 
     #if IS_MELZI
       #define BTN_ENC                         29
-      #ifndef LCD_SDSS
-        #define LCD_SDSS                      30  // Panelolu2 SD card reader rather than the Melzi
-      #endif
+      #define LCD_SDSS                        30  // Panelolu2 SD card reader rather than the Melzi
     #else
       #define BTN_ENC                         30
     #endif
@@ -253,27 +262,25 @@
   #else                                           // !LCD_FOR_MELZI && !ZONESTAR_LCD && !LCD_I2C_PANELOLU2
 
     #define BTN_ENC                           16
-    #ifndef LCD_SDSS
-      #define LCD_SDSS                        28  // Smart Controller SD card reader rather than the Melzi
-    #endif
+    #define LCD_SDSS                          28  // Smart Controller SD card reader rather than the Melzi
 
   #endif
 
-  #if IS_NEWPANEL && !defined(BTN_EN1)
+  #if ENABLED(NEWPANEL) && !defined(BTN_EN1)
     #define BTN_EN1                           11
     #define BTN_EN2                           10
   #endif
 
-#endif // HAS_WIRED_LCD
+#endif // HAS_SPI_LCD
 
 //
 // M3/M4/M5 - Spindle/Laser Control
 //
 #if HAS_CUTTER
-  #if !MB(AZTEEG_X1) && ENABLED(SANGUINOLOLU_V_1_2) && !ALL(HAS_WIRED_LCD, IS_NEWPANEL) // try to use IO Header
+  #if !MB(AZTEEG_X1) && ENABLED(SANGUINOLOLU_V_1_2) && !BOTH(ULTRA_LCD, NEWPANEL)// try to use IO Header
 
-    #define SPINDLE_LASER_PWM_PIN              4  // Hardware PWM
     #define SPINDLE_LASER_ENA_PIN             10  // Pullup or pulldown!
+    #define SPINDLE_LASER_PWM_PIN              4  // Hardware PWM
     #define SPINDLE_DIR_PIN                   11
 
   #elif !MB(MELZI)                                // use X stepper motor socket

@@ -16,18 +16,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
  * CNControls V15 for HMS434 pin assignments
- * ATmega2560, ATmega1280
  */
 
-#define ALLOW_MEGA1280
-#include "env_validate.h"
+#if !defined(__AVR_ATmega1280__) && !defined(__AVR_ATmega2560__)
+  #error "Oops! Select 'Arduino/Genuino Mega or Mega 2560' in 'Tools > Board.'"
+#endif
 
 #define BOARD_INFO_NAME "CN Controls V15"
 
@@ -87,27 +87,12 @@
 //
 // Fans
 //
-#define FAN0_PIN                               8
-
-//
-// Auto fans
-//
-#define AUTO_FAN_PIN                          30
-#ifndef E0_AUTO_FAN_PIN
-  #define E0_AUTO_FAN_PIN           AUTO_FAN_PIN
-#endif
-#ifndef E1_AUTO_FAN_PIN
-  #define E1_AUTO_FAN_PIN           AUTO_FAN_PIN
-#endif
-#ifndef E2_AUTO_FAN_PIN
-  #define E2_AUTO_FAN_PIN           AUTO_FAN_PIN
-#endif
-#ifndef E3_AUTO_FAN_PIN
-  #define E3_AUTO_FAN_PIN           AUTO_FAN_PIN
-#endif
-#ifndef CHAMBER_AUTO_FAN_PIN
-  //#define CHAMBER_AUTO_FAN_PIN              10
-#endif
+#define FAN_PIN                                8
+#define ORIG_E0_AUTO_FAN_PIN                  30
+#define ORIG_E1_AUTO_FAN_PIN                  30
+#define ORIG_E2_AUTO_FAN_PIN                  30
+#define ORIG_E3_AUTO_FAN_PIN                  30
+//#define ORIG_CHAMBER_AUTO_FAN_PIN           10
 
 //
 // Misc. Functions

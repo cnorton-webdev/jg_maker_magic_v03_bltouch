@@ -16,16 +16,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#pragma once
 
 /**
  * CNControls V15 for HMS434 with DUE pin assignments
  */
 
-#include "env_validate.h"
+#ifndef __SAM3X8E__
+  #error "Oops! Select 'Arduino Due' in 'Tools > Board.'"
+#endif
 
 #define BOARD_INFO_NAME "CN Controls V15D"
 
@@ -92,33 +93,18 @@
 // Fans
 //
 //#define FAN0_PIN                             8
-
-//
-// Auto fans
-//
-#define AUTO_FAN_PIN                          30
-#ifndef E0_AUTO_FAN_PIN
-  #define E0_AUTO_FAN_PIN           AUTO_FAN_PIN
-#endif
-#ifndef E1_AUTO_FAN_PIN
-  #define E1_AUTO_FAN_PIN           AUTO_FAN_PIN
-#endif
-#ifndef E2_AUTO_FAN_PIN
-  #define E2_AUTO_FAN_PIN           AUTO_FAN_PIN
-#endif
-#ifndef E3_AUTO_FAN_PIN
-  #define E3_AUTO_FAN_PIN           AUTO_FAN_PIN
-#endif
-#ifndef CHAMBER_AUTO_FAN_PIN
-  #define CHAMBER_AUTO_FAN_PIN                10
-#endif
+#define ORIG_E0_AUTO_FAN_PIN                  30
+#define ORIG_E1_AUTO_FAN_PIN                  30
+#define ORIG_E2_AUTO_FAN_PIN                  30
+#define ORIG_E3_AUTO_FAN_PIN                  30
+#define ORIG_CHAMBER_AUTO_FAN_PIN             10
 
 //
 // SD card
 //
-#define SD_SCK_PIN                            76
-#define SD_MISO_PIN                           74
-#define SD_MOSI_PIN                           75
+#define SCK_PIN                               76
+#define MISO_PIN                              74
+#define MOSI_PIN                              75
 #define SDSS                                  53
 #define SD_DETECT_PIN                         40
 

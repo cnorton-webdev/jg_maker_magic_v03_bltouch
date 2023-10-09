@@ -16,20 +16,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 #pragma once
 
 /**
- * STB Electronics V1.1 pin assignments
- * https://www.reprap.org/wiki/STB_Electronics
+ * STB V1.1 pin assignments
  */
 
 #define BOARD_INFO_NAME "STB V1.1"
 
-#ifndef FAN0_PIN
-  #define FAN0_PIN                             4  // Works for Panelolu2 too
-#endif
-
-#include "pins_SANGUINOLOLU_12.h" // ... SANGUINOLOLU_11
+#include "pins_SANGUINOLOLU_12.h"

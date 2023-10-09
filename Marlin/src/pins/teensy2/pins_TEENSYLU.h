@@ -16,25 +16,21 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.   If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.   If not, see <http://www.gnu.org/licenses/>.
+ *
  */
-#pragma once
 
 /**
  *  Rev C  2 JUN 2017
  *
  *  Converted to Arduino pin numbering
- *
- *  Schematic (1.0): https://green-candy.osdn.jp/external/MarlinFW/board_schematics/Teensylu%20v1.0/schematic.png
- *  Origin (1.0): https://raw.githubusercontent.com/StephS/Teensylu/master/working/Teensylu-1.0.sch
- *  (*) Other versions are discouraged by creator.
  */
 
 /**
  *  There are two Arduino IDE extensions that are compatible with this board
  *  and with the mainstream Marlin software.  All have been used with Arduino 1.6.12
  *
- *  Teensyduino - https://www.pjrc.com/teensy/teensyduino.html
+ *  Teensyduino - http://www.pjrc.com/teensy/teensyduino.html
  *    Select Teensy++ 2.0 in Arduino IDE from the 'Tools > Board' menu
  *
  *    Installation instructions are at the above URL.  Don't bother loading the
@@ -77,10 +73,7 @@
   *  The pin assignments in this file match the silkscreen.
   */
 
-#define ALLOW_AT90USB1286P
-#include "env_validate.h"
-
-#if NOT_TARGET(__AVR_AT90USB1286__, __AVR_AT90USB1286P__)
+#if !defined(__AVR_AT90USB1286__) && !defined(__AVR_AT90USB1286P__)
   #error "Oops! Select 'Teensy++ 2.0' or 'Printrboard' in 'Tools > Board.'"
 #endif
 
@@ -133,23 +126,20 @@
 #define HEATER_0_PIN                          15  // C5 PWM3B - Extruder
 #define HEATER_BED_PIN                        14  // C4 PWM3C
 
-#ifndef FAN0_PIN
-  #define FAN0_PIN                            16  // C6 PWM3A
+#ifndef FAN_PIN
+  #define FAN_PIN                             16  // C6 PWM3A
 #endif
 
 //
 // Misc. Functions
 //
 #define SDSS                                  20  // B0 JP31-6
-
-#ifndef CASE_LIGHT_PIN
-  #define CASE_LIGHT_PIN                       0  // D0 IO-14  PWM0B
-#endif
+#define CASE_LIGHT_PIN                         0  // D0 IO-14  PWM0B
 
 //
 // LCD / Controller
 //
-#if HAS_WIRED_LCD && IS_NEWPANEL
+#if BOTH(ULTRA_LCD, NEWPANEL)
 
   #define BEEPER_PIN                          -1
 
@@ -162,13 +152,11 @@
 
   #define SD_DETECT_PIN                       -1
 
-#endif // HAS_WIRED_LCD && IS_NEWPANEL
+#endif // HAS_SPI_LCD && NEWPANEL
 
 //
 // M3/M4/M5 - Spindle/Laser Control
 //
-#if HAS_CUTTER
-  #define SPINDLE_LASER_PWM_PIN               24  // B4 IO-3 PWM2A - MUST BE HARDWARE PWM
-  #define SPINDLE_LASER_ENA_PIN               39  // F1 IO-11 - Pin should have a pullup!
-  #define SPINDLE_DIR_PIN                     40  // F2 IO-9
-#endif
+#define SPINDLE_LASER_PWM_PIN                 24  // B4 IO-3 PWM2A - MUST BE HARDWARE PWM
+#define SPINDLE_LASER_ENA_PIN                 39  // F1 IO-11 - Pin should have a pullup!
+#define SPINDLE_DIR_PIN                       40  // F2 IO-9
