@@ -68,7 +68,7 @@
   #ifdef IS_RAMPS_13
     #define SERVO0_PIN                         7
   #else
-    #define SERVO0_PIN                        11 // Default: 11  - Cnorton
+    #define SERVO0_PIN                        15 // Default: 11  - Cnorton
   #endif
 #endif
 #ifndef SERVO1_PIN
