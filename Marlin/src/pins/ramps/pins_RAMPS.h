@@ -156,6 +156,71 @@
   #define E1_CS_PIN                           44
 #endif
 
+/**
+ * Default pins for TMC software SPI
+ */
+#if ENABLED(TMC_USE_SW_SPI)
+  #ifndef TMC_SW_MOSI
+    #define TMC_SW_MOSI    66
+  #endif
+  #ifndef TMC_SW_MISO
+    #define TMC_SW_MISO    44
+  #endif
+  #ifndef TMC_SW_SCK
+    #define TMC_SW_SCK     64
+  #endif
+#endif
+
+#if HAS_DRIVER(TMC2208)
+  /**
+   * TMC2208 stepper drivers
+   *
+   * Hardware serial communication ports.
+   * If undefined software serial is used according to the pins below
+   */
+  //#define X_HARDWARE_SERIAL  Serial1
+  //#define X2_HARDWARE_SERIAL Serial1
+  //#define Y_HARDWARE_SERIAL  Serial1
+  //#define Y2_HARDWARE_SERIAL Serial1
+  //#define Z_HARDWARE_SERIAL  Serial1
+  //#define Z2_HARDWARE_SERIAL Serial1
+  //#define E0_HARDWARE_SERIAL Serial1
+  //#define E1_HARDWARE_SERIAL Serial1
+  //#define E2_HARDWARE_SERIAL Serial1
+  //#define E3_HARDWARE_SERIAL Serial1
+  //#define E4_HARDWARE_SERIAL Serial1
+
+  /**
+   * Software serial
+   */
+
+  #define X_SERIAL_TX_PIN    40
+  #define X_SERIAL_RX_PIN    63
+  #define X2_SERIAL_TX_PIN   -1
+  #define X2_SERIAL_RX_PIN   -1
+
+  #define Y_SERIAL_TX_PIN    59
+  #define Y_SERIAL_RX_PIN    64
+  #define Y2_SERIAL_TX_PIN   -1
+  #define Y2_SERIAL_RX_PIN   -1
+
+  #define Z_SERIAL_TX_PIN    42
+  #define Z_SERIAL_RX_PIN    65
+  #define Z2_SERIAL_TX_PIN   -1
+  #define Z2_SERIAL_RX_PIN   -1
+
+  #define E0_SERIAL_TX_PIN   44
+  #define E0_SERIAL_RX_PIN   66
+  #define E1_SERIAL_TX_PIN   -1
+  #define E1_SERIAL_RX_PIN   -1
+  #define E2_SERIAL_TX_PIN   -1
+  #define E2_SERIAL_RX_PIN   -1
+  #define E3_SERIAL_TX_PIN   -1
+  #define E3_SERIAL_RX_PIN   -1
+  #define E4_SERIAL_TX_PIN   -1
+  #define E4_SERIAL_RX_PIN   -1
+#endif
+
 //
 // Temperature Sensors
 //
@@ -169,11 +234,11 @@
   #define TEMP_BED_PIN                        14  // Analog Input
 #endif
 
-//
 // SPI for Max6675 or Max31855 Thermocouple
-//
-#ifndef MAX6675_SS_PIN
-  #define MAX6675_SS_PIN                      66  // Don't use 53 if using Display/SD card (SDSS) or 49 (SD_DETECT_PIN)
+#if DISABLED(SDSUPPORT)
+  #define MAX6675_SS_PIN       66   // Do not use pin 53 if there is even the remote possibility of using Display/SD card
+#else
+  #define MAX6675_SS_PIN       66   // Do not use pin 49 as this is tied to the switch inside the SD card socket to detect if there is an SD card present
 #endif
 
 //
@@ -253,18 +318,19 @@
 
 // RAMPS 1.4 DIO 4 on the servos connector
 #ifndef FIL_RUNOUT_PIN
-  #define FIL_RUNOUT_PIN                       4
+  #define FIL_RUNOUT_PIN                       2
 #endif
 
 #ifndef PS_ON_PIN
   #define PS_ON_PIN                           12
 #endif
 
-#if ENABLED(CASE_LIGHT_ENABLE) && !defined(CASE_LIGHT_PIN) && !defined(SPINDLE_LASER_ENA_PIN)
-  #if NUM_SERVOS <= 1                             // Prefer the servo connector
-    #define CASE_LIGHT_PIN                     6  // Hardware PWM
-  #elif HAS_FREE_AUX2_PINS
-    #define CASE_LIGHT_PIN                    44  // Hardware PWM
+#if ENABLED(CASE_LIGHT_ENABLE) && !defined(CASE_LIGHT_PIN) && !defined(SPINDLE_LASER_ENABLE_PIN)
+  #if NUM_SERVOS <= 1 // try to use servo connector first
+    #define CASE_LIGHT_PIN    6   // MUST BE HARDWARE PWM
+  #elif !(ENABLED(ULTRA_LCD) && ENABLED(NEWPANEL) \
+      && (ENABLED(PANEL_ONE) || ENABLED(VIKI2) || ENABLED(miniVIKI) || ENABLED(MINIPANEL) || ENABLED(REPRAPWORLD_KEYPAD)))  // try to use AUX 2
+    #define CASE_LIGHT_PIN   44   // MUST BE HARDWARE PWM
   #endif
 #endif
 
@@ -285,132 +351,6 @@
   #endif
 #endif
 
-//
-// TMC software SPI
-//
-#if ENABLED(TMC_USE_SW_SPI)
-  #ifndef TMC_SW_MOSI
-    #define TMC_SW_MOSI                       66
-  #endif
-  #ifndef TMC_SW_MISO
-    #define TMC_SW_MISO                       44
-  #endif
-  #ifndef TMC_SW_SCK
-    #define TMC_SW_SCK                        64
-  #endif
-#endif
-
-#if HAS_TMC_UART
-  /**
-   * TMC2208/TMC2209 stepper drivers
-   *
-   * Hardware serial communication ports.
-   * If undefined software serial is used according to the pins below
-   */
-  //#define X_HARDWARE_SERIAL Serial1
-  //#define X2_HARDWARE_SERIAL Serial1
-  //#define Y_HARDWARE_SERIAL Serial1
-  //#define Y2_HARDWARE_SERIAL Serial1
-  //#define Z_HARDWARE_SERIAL Serial1
-  //#define Z2_HARDWARE_SERIAL Serial1
-  //#define E0_HARDWARE_SERIAL Serial1
-  //#define E1_HARDWARE_SERIAL Serial1
-  //#define E2_HARDWARE_SERIAL Serial1
-  //#define E3_HARDWARE_SERIAL Serial1
-  //#define E4_HARDWARE_SERIAL Serial1
-
-  //
-  // Software serial
-  //
-
-  #ifndef X_SERIAL_TX_PIN
-    #define X_SERIAL_TX_PIN                   40
-  #endif
-  #ifndef X_SERIAL_RX_PIN
-    #define X_SERIAL_RX_PIN                   63
-  #endif
-  #ifndef X2_SERIAL_TX_PIN
-    #define X2_SERIAL_TX_PIN                  -1
-  #endif
-  #ifndef X2_SERIAL_RX_PIN
-    #define X2_SERIAL_RX_PIN                  -1
-  #endif
-
-  #ifndef Y_SERIAL_TX_PIN
-    #define Y_SERIAL_TX_PIN                   59
-  #endif
-  #ifndef Y_SERIAL_RX_PIN
-    #define Y_SERIAL_RX_PIN                   64
-  #endif
-  #ifndef Y2_SERIAL_TX_PIN
-    #define Y2_SERIAL_TX_PIN                  -1
-  #endif
-  #ifndef Y2_SERIAL_RX_PIN
-    #define Y2_SERIAL_RX_PIN                  -1
-  #endif
-
-  #ifndef Z_SERIAL_TX_PIN
-    #define Z_SERIAL_TX_PIN                   42
-  #endif
-  #ifndef Z_SERIAL_RX_PIN
-    #define Z_SERIAL_RX_PIN                   65
-  #endif
-  #ifndef Z2_SERIAL_TX_PIN
-    #define Z2_SERIAL_TX_PIN                  -1
-  #endif
-  #ifndef Z2_SERIAL_RX_PIN
-    #define Z2_SERIAL_RX_PIN                  -1
-  #endif
-
-  #ifndef E0_SERIAL_TX_PIN
-    #define E0_SERIAL_TX_PIN                  44
-  #endif
-  #ifndef E0_SERIAL_RX_PIN
-    #define E0_SERIAL_RX_PIN                  66
-  #endif
-  #ifndef E1_SERIAL_TX_PIN
-    #define E1_SERIAL_TX_PIN                  -1
-  #endif
-  #ifndef E1_SERIAL_RX_PIN
-    #define E1_SERIAL_RX_PIN                  -1
-  #endif
-  #ifndef E2_SERIAL_TX_PIN
-    #define E2_SERIAL_TX_PIN                  -1
-  #endif
-  #ifndef E2_SERIAL_RX_PIN
-    #define E2_SERIAL_RX_PIN                  -1
-  #endif
-  #ifndef E3_SERIAL_TX_PIN
-    #define E3_SERIAL_TX_PIN                  -1
-  #endif
-  #ifndef E3_SERIAL_RX_PIN
-    #define E3_SERIAL_RX_PIN                  -1
-  #endif
-  #ifndef E4_SERIAL_TX_PIN
-    #define E4_SERIAL_TX_PIN                  -1
-  #endif
-  #ifndef E4_SERIAL_RX_PIN
-    #define E4_SERIAL_RX_PIN                  -1
-  #endif
-  #ifndef E5_SERIAL_TX_PIN
-    #define E5_SERIAL_TX_PIN                  -1
-  #endif
-  #ifndef E5_SERIAL_RX_PIN
-    #define E5_SERIAL_RX_PIN                  -1
-  #endif
-  #ifndef E6_SERIAL_TX_PIN
-    #define E6_SERIAL_TX_PIN                  -1
-  #endif
-  #ifndef E6_SERIAL_RX_PIN
-    #define E6_SERIAL_RX_PIN                  -1
-  #endif
-  #ifndef E7_SERIAL_TX_PIN
-    #define E7_SERIAL_TX_PIN                  -1
-  #endif
-  #ifndef E7_SERIAL_RX_PIN
-    #define E7_SERIAL_RX_PIN                  -1
-  #endif
-#endif
 
 //
 // Průša i3 MK2 Multiplexer Support
@@ -553,8 +493,8 @@
 
     #elif ENABLED(LCD_I2C_VIKI)
 
-      #define BTN_EN1                         40  // http://files.panucatt.com/datasheets/viki_wiring_diagram.pdf explains 40/42.
-      #define BTN_EN2                         42
+      #define BTN_EN1                         22  // http://files.panucatt.com/datasheets/viki_wiring_diagram.pdf explains 40/42.
+      #define BTN_EN2                         7
       #define BTN_ENC                         -1
 
       #define LCD_SDSS                      SDSS
@@ -592,132 +532,86 @@
       #define LCD_SDSS                      SDSS
       #define SD_DETECT_PIN                   49
       #define KILL_PIN                        41
+ #elif ENABLED(MKS_MINI_12864)   // Added in Marlin 1.1.6
 
-    #elif EITHER(MKS_MINI_12864, FYSETC_MINI_12864)
-
-      #define BEEPER_PIN                      37
-      #define BTN_ENC                         35
-      #define SD_DETECT_PIN                   49
-
-      #ifndef KILL_PIN
-        #define KILL_PIN                      41
-      #endif
-
-      #if ENABLED(MKS_MINI_12864)                 // Added in Marlin 1.1.6
-
-        #define DOGLCD_A0                     27
-        #define DOGLCD_CS                     25
-
-        // GLCD features
-        // Uncomment screen orientation
-        //#define LCD_SCREEN_ROT_90
-        //#define LCD_SCREEN_ROT_180
-        //#define LCD_SCREEN_ROT_270
-
-        // not connected to a pin
-        #define LCD_BACKLIGHT_PIN             -1  // 65 (MKS mini12864 can't adjust backlight by software!)
-
-        #define BTN_EN1                       31
-        #define BTN_EN2                       33
-
-      #elif ENABLED(FYSETC_MINI_12864)
-
-        // From https://wiki.fysetc.com/Mini12864_Panel/?fbclid=IwAR1FyjuNdVOOy9_xzky3qqo_WeM5h-4gpRnnWhQr_O1Ef3h0AFnFXmCehK8
-
-        #define DOGLCD_A0                     16
-        #define DOGLCD_CS                     17
-
-        #define BTN_EN1                       33
-        #define BTN_EN2                       31
-
-        //#define FORCE_SOFT_SPI                  // Use this if default of hardware SPI causes display problems
-                                                  //   results in LCD soft SPI mode 3, SD soft SPI mode 0
-
-        #define LCD_RESET_PIN                 23  // Must be high or open for LCD to operate normally.
-
-        #if EITHER(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
-          #ifndef RGB_LED_R_PIN
-            #define RGB_LED_R_PIN             25
-          #endif
-          #ifndef RGB_LED_G_PIN
-            #define RGB_LED_G_PIN             27
-          #endif
-          #ifndef RGB_LED_B_PIN
-            #define RGB_LED_B_PIN             29
-          #endif
-        #elif ENABLED(FYSETC_MINI_12864_2_1)
-          #define NEOPIXEL_PIN                25
-        #endif
-
-      #endif
-
-    #elif ENABLED(MINIPANEL)
-
-      #define BEEPER_PIN                      42
-      // not connected to a pin
-      #define LCD_BACKLIGHT_PIN               65  // backlight LED on A11/D65
-
-      #define DOGLCD_A0                       44
-      #define DOGLCD_CS                       66
+      #define DOGLCD_A0         27
+      #define DOGLCD_CS         25
 
       // GLCD features
+      //#define LCD_CONTRAST   190
       // Uncomment screen orientation
       //#define LCD_SCREEN_ROT_90
       //#define LCD_SCREEN_ROT_180
       //#define LCD_SCREEN_ROT_270
 
-      #define BTN_EN1                         40
-      #define BTN_EN2                         63
-      #define BTN_ENC                         59
+      #define BEEPER_PIN        37
+      // not connected to a pin
+      #define LCD_BACKLIGHT_PIN 65   // backlight LED on A11/D65
 
-      #define SD_DETECT_PIN                   49
-      #define KILL_PIN                        64
+      #define BTN_EN1           31
+      #define BTN_EN2           33
+      #define BTN_ENC           35
+
+      #define SD_DETECT_PIN     49
+      #define KILL_PIN          64
+
+    #elif ENABLED(MINIPANEL)
+
+      #define BEEPER_PIN        42
+      // not connected to a pin
+      #define LCD_BACKLIGHT_PIN 65   // backlight LED on A11/D65
+
+      #define DOGLCD_A0         44
+      #define DOGLCD_CS         66
+
+      // GLCD features
+      //#define LCD_CONTRAST   190
+      // Uncomment screen orientation
+      //#define LCD_SCREEN_ROT_90
+      //#define LCD_SCREEN_ROT_180
+      //#define LCD_SCREEN_ROT_270
+
+      #define BTN_EN1           40
+      #define BTN_EN2           63
+      #define BTN_ENC           59
+
+      #define SD_DETECT_PIN     49
+      #define KILL_PIN          64
 
     #elif ENABLED(ZONESTAR_LCD)
 
-      #define ADC_KEYPAD_PIN                  12
-
-    #elif ENABLED(AZSMZ_12864)
-
-      // Pins only defined for RAMPS_SMART currently
+      #define ADC_KEYPAD_PIN    12
 
     #else
 
       // Beeper on AUX-4
-      #define BEEPER_PIN                      33
+      #define BEEPER_PIN        33
 
-      // Buttons are directly attached to AUX-2
-      #if ENABLED(PANEL_ONE)
-        #define BTN_EN1                       59  // AUX2 PIN 3
-        #define BTN_EN2                       63  // AUX2 PIN 4
-        #define BTN_ENC                       49  // AUX3 PIN 7
+      // Buttons are directly attached using AUX-2
+      #if ENABLED(REPRAPWORLD_KEYPAD)
+        #define SHIFT_OUT       40
+        #define SHIFT_CLK       44
+        #define SHIFT_LD        42
+        #define BTN_EN1         64
+        #define BTN_EN2         59
+        #define BTN_ENC         63
+      #elif ENABLED(PANEL_ONE)
+        #define BTN_EN1         59   // AUX2 PIN 3
+        #define BTN_EN2         63   // AUX2 PIN 4
+        #define BTN_ENC         49   // AUX3 PIN 7
       #else
-        #define BTN_EN1                       37
-        #define BTN_EN2                       35
-        #define BTN_ENC                       31
+        #define BTN_EN1         37
+        #define BTN_EN2         35
+        #define BTN_ENC         31
       #endif
 
       #if ENABLED(G3D_PANEL)
-        #define SD_DETECT_PIN                 49
-        #define KILL_PIN                      41
+        #define SD_DETECT_PIN   49
+        #define KILL_PIN        41
       #endif
 
     #endif
   #endif // NEWPANEL
 
-#endif // HAS_SPI_LCD
+#endif // ULTRA_LCD
 
-#if ENABLED(REPRAPWORLD_KEYPAD)
-  #define SHIFT_OUT                           40
-  #define SHIFT_CLK                           44
-  #define SHIFT_LD                            42
-  #ifndef BTN_EN1
-    #define BTN_EN1                           64
-  #endif
-  #ifndef BTN_EN2
-    #define BTN_EN2                           59
-  #endif
-  #ifndef BTN_ENC
-    #define BTN_ENC                           63
-  #endif
-#endif
